@@ -26,10 +26,10 @@ your_dataset_path/test/B  # testing ground truth
 ```
 After that, the dataset configuration should be specified in config file as:
 ```yaml
-dataset_name: 'your_dataset_name'
+dataset_name: 'your_dataset_name' # 'Cdata'
 dataset_type: 'custom_aligned'
 dataset_config:
-  dataset_path: 'your_dataset_path'
+  dataset_path: 'your_dataset_path' # '/Users/dorisadriana/Downloads/Cdata'
 ```
 
 ### Colorization and Inpainting
