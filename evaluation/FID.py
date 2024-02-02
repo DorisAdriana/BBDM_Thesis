@@ -1,8 +1,7 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
-import pytorch_fid
-# from pytorch_fid import fid_score
+from pytorch_fid import fid_score
 
 # 加载预训练的Inception-v3模型
 # inception_model = torchvision.models.inception_v3(pretrained=True).to(torch.device('cuda:0'))
