@@ -16,7 +16,7 @@ data:
   dataset_name: 'Cdata'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: '/Users/dorisadriana/Downloads/Cdata'
+    dataset_path: 'data/Cdata'
     image_size: 256
     channels: 3
     to_normal: True
@@ -37,8 +37,8 @@ model:
   latent_before_quant_conv: False
   normalize_latent: False
   only_load_latent_mean_std: False
-  model_load_path:  '/Users/dorisadriana/Downloads/model_checkpoint' # model checkpoint path
-  # optim_sche_load_path:  # optimizer scheduler checkpoint path
+  # model_load_path: # model checkpoint path
+  # optim_sche_load_path:  # optimizer scheduler checkpoint pathS
 
   EMA:
     use_ema: True
