@@ -75,6 +75,7 @@ finalfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01'
 path = "/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Temp/dawezenberg/Data/4dflow"
 
 
+# deze precies zo processen maar storen in processed map als jpeg. Dan kunnen trainen :)
 from PIL import Image
 outputdir = 'data/processed/B'
 ### CREATE 4d
