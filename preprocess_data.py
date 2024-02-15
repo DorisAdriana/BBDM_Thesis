@@ -10,7 +10,7 @@ target_size = (64, 64)
 # Iterate over all files in the directory
 for source_dir in source_list:
     for filename in os.listdir(source_dir):
-        if filename.lower().endswith('.jpg') or filename.lower().endswith('.jpeg'):  # Check for JPEG files
+        #if filename.lower().endswith('.jpg') or filename.lower().endswith('.jpeg'):  # Check for JPEG files
             # Construct the full file path
             file_path = os.path.join(source_dir, filename)
             
