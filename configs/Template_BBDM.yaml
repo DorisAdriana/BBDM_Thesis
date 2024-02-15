@@ -13,10 +13,10 @@ testing:
   sample_num: 5
 
 data:
-  dataset_name: 'Cdata'
+  dataset_name: 'Cdata_s'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: 'data/Cdata'
+    dataset_path: 'data/Cdata_s'
     image_size: 256
     channels: 3
     to_normal: True
