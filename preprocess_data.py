@@ -3,6 +3,7 @@ import os
 
 # Path to the directory containing the images
 source_list =['data/Cdata/train/A', 'data/Cdata/train/B', 'data/Cdata/test/A', 'data/Cdata/test/B', 'data/Cdata/val/A', 'data/Cdata/val/B']
+source_list =['data/Cdata/train/A'] #, 'data/Cdata/train/B', 'data/Cdata/test/A', 'data/Cdata/test/B', 'data/Cdata/val/A', 'data/Cdata/val/B']
 
 # Target size
 target_size = (64, 64)
