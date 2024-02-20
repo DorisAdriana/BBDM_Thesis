@@ -72,10 +72,11 @@ import os
 finalfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01', 'TOW224', 'TOW048', 'TOW216', 'TOW_VOL04', 'TOW013', 'TOW254', 'TOW_VOL07',
                  'TOW_VOL09', 'TOW132', 'TOW125', 'TOW049', 'TOW_VOL10', 'TOW259', 'TOW080', 'TOW257', 'TOW042', 'TOW_VOL002', 'TOW113', 'TOW097', 'TOW040', 
                  'TOW251', 'TOW046', 'TOW_VOL05', 'TOW201', 'TOW_VOL06', 'TOW017', 'TOW011', 'TOW018']
-path = "/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Temp/dawezenberg/Data/4dflow"
+path = "my-rdisk/r-divi/rng/projects/stages/pim/doris/data/4dflow"
 
 
 # deze precies zo processen maar storen in processed map als jpeg. Dan kunnen trainen :)
+# dit worden dus alle 34 met 256x256 shape, proberen zo te runnen en alle 64 in configs file naar 256 doen en proberen, anders reshapen
 from PIL import Image
 outputdir = 'data/processed/B'
 ### CREATE 4d
@@ -104,4 +105,3 @@ for folder in finalfolders:
 
 print("Finished")
 
-# test changes
