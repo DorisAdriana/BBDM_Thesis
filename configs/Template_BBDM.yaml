@@ -1,4 +1,5 @@
 # Brownian Bridge Diffusion Model Template(Pixel Space)
+
 runner: "BBDMRunner"
 training:
   n_epochs: 200
