@@ -162,43 +162,45 @@ import numpy as np
 
 
 ###### Folders in right location ######
-## Adapt folder name and path and use this to store data in the right folders
-### SET VAR
-finalfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01', 'TOW224', 'TOW048', 'TOW216', 'TOW_VOL04', 'TOW013', 'TOW254', 'TOW_VOL07',
-                 'TOW_VOL09', 'TOW132', 'TOW125', 'TOW049', 'TOW_VOL10', 'TOW259', 'TOW080', 'TOW257', 'TOW042', 'TOW_VOL002', 'TOW113', 'TOW097', 'TOW040', 
-                 'TOW251', 'TOW046', 'TOW_VOL05', 'TOW201', 'TOW_VOL06', 'TOW017', 'TOW011', 'TOW018']
+# ## Adapt folder name and path and use this to store data in the right folders
+# ### SET VAR
+# finalfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01', 'TOW224', 'TOW048', 'TOW216', 'TOW_VOL04', 'TOW013', 'TOW254', 'TOW_VOL07',
+#                  'TOW_VOL09', 'TOW132', 'TOW125', 'TOW049', 'TOW_VOL10', 'TOW259', 'TOW080', 'TOW257', 'TOW042', 'TOW_VOL002', 'TOW113', 'TOW097', 'TOW040', 
+#                  'TOW251', 'TOW046', 'TOW_VOL05', 'TOW201', 'TOW_VOL06', 'TOW017', 'TOW011', 'TOW018']
 
-trainfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01', 'TOW224', 'TOW048', 'TOW216', 'TOW_VOL04', 'TOW013', 'TOW254', 'TOW_VOL07',
-                 'TOW_VOL09', 'TOW132', 'TOW125', 'TOW049', 'TOW_VOL10', 'TOW259', 'TOW080']
-testfolders = ['TOW257', 'TOW042', 'TOW_VOL002', 'TOW113', 'TOW097', 'TOW040', 
-                 'TOW251']
-valfolders = ['TOW046', 'TOW_VOL05', 'TOW201', 'TOW_VOL06', 'TOW017', 'TOW011', 'TOW018']
+# trainfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01', 'TOW224', 'TOW048', 'TOW216', 'TOW_VOL04', 'TOW013', 'TOW254', 'TOW_VOL07',
+#                  'TOW_VOL09', 'TOW132', 'TOW125', 'TOW049', 'TOW_VOL10', 'TOW259', 'TOW080']
+# testfolders = ['TOW257', 'TOW042', 'TOW_VOL002', 'TOW113', 'TOW097', 'TOW040', 
+#                  'TOW251']
+# valfolders = ['TOW046', 'TOW_VOL05', 'TOW201', 'TOW_VOL06', 'TOW017', 'TOW011', 'TOW018']
 
-import os
-import shutil
+# import os
+# import shutil
 
-# Define the source folders and the destination folders
-source_folders = {'4dflow_15ts': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/4dflow_15ts', 'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'}
-destination_folders = {'4dflow_15ts': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed/val/A',
-                       'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed/val/B'}
+# # Define the source folders and the destination folders
+# source_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/4dflow', 'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'}
+# destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed/train/A',
+#                        'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed/train/B'}
 
-# Function to copy files for the first 20 scans
-def copy_files_for_scans(source, destination):
-    # Loop through the first 20 scans
-    for scan in valfolders: 
-        # For each scan, loop through the slices
-        for N in range(1, 71):
-            for M in range(1, 16):
-                file_name = f'img_{scan}__slice_{N}_{M}.jpg'
-                source_file = os.path.join(source, file_name)
-                destination_file = os.path.join(destination, file_name)
-                # Copy file if it exists
-                if os.path.exists(source_file):
-                    shutil.copy(source_file, destination_file)
-                else:
-                    print(f"File does not exist: {source_file}")
+# # Function to copy files for the first 20 scans
+# def copy_files_for_scans(source, destination):
+#     # Loop through the first 20 scans
+#     for scan in trainfolders: 
+#         # For each scan, loop through the slices
+#         for N in range(1, 71):
+#             for M in range(1, 16):
+#                 file_name = f'img_{scan}__slice_{N}_{M}.jpg'
+#                 source_file = os.path.join(source, file_name)
+#                 destination_file = os.path.join(destination, file_name)
+#                 # Copy file if it exists
+#                 if os.path.exists(source_file):
+#                     shutil.copy(source_file, destination_file)
+#                 else:
+#                     print(f"File does not exist: {source_file}")
 
-# Run the copy function for each folder
-for key in source_folders:
-    copy_files_for_scans(source_folders[key], destination_folders[key])
+# # Run the copy function for each folder
+# for key in source_folders:
+#     copy_files_for_scans(source_folders[key], destination_folders[key])
+
+# print("Finished")
 

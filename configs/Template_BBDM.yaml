@@ -1,7 +1,7 @@
 # Brownian Bridge Diffusion Model Template(Pixel Space)
 runner: "BBDMRunner"
 training:
-  n_epochs: 20 # 200
+  n_epochs: 200
   n_steps: 400000
   save_interval: 20
   sample_interval: 2
@@ -13,11 +13,11 @@ testing:
   sample_num: 5
 
 data:
-  dataset_name: 'Cdata'
+  dataset_name: 'processed'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: 'data/Cdata'
-    image_size: 64 #this should probably be 64, the needed output
+    dataset_path: 'data/processed'
+    image_size: 256 #64 #this should probably be 64, the needed output
     channels: 3
     to_normal: True
     flip: False
@@ -79,7 +79,7 @@ model:
       max_var: 1.0 # maximum variance
 
       UNetParams:
-        image_size: 64
+        image_size: 256 # 64
         in_channels: 6
         model_channels: 128
         out_channels: 3
@@ -95,7 +95,7 @@ model:
         conv_resample: True
         dims: 2
         num_heads: 8
-        num_head_channels: 64
+        num_head_channels: 256 #64
         use_scale_shift_norm: True
         resblock_updown: True
         use_spatial_transformer: False
