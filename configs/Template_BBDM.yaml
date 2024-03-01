@@ -2,11 +2,7 @@
 
 runner: "BBDMRunner"
 training:
-<<<<<<< HEAD
   n_epochs: 10 # 200
-=======
-  n_epochs: 5 # 200
->>>>>>> 7585263908dcd93cbb4775bfab69bbf6f36a2862
   n_steps: 400000
   save_interval: 20
   sample_interval: 2
@@ -18,11 +14,7 @@ testing:
   sample_num: 5
 
 data:
-<<<<<<< HEAD
   dataset_name: 'BBDM_10_epoch'
-=======
-  dataset_name: 'processed_5epochs'
->>>>>>> 7585263908dcd93cbb4775bfab69bbf6f36a2862
   dataset_type: 'custom_aligned'
   dataset_config:
     dataset_path: 'data/processed'
