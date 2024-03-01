@@ -2,5 +2,6 @@
 # *.pt
 # results/
 # results/processed
+*.out
 results/processed/BrownianBridge/checkpoint
 results/BBDM_10_epoch/BrownianBridge/checkpoint
