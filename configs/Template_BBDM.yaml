@@ -2,7 +2,7 @@
 
 runner: "BBDMRunner"
 training:
-  n_epochs: 10 # 200
+  n_epochs: 20 # 200
   n_steps: 400000
   save_interval: 20
   sample_interval: 2
@@ -14,7 +14,7 @@ testing:
   sample_num: 5
 
 data:
-  dataset_name: 'BBDM_10_epoch'
+  dataset_name: 'BBDM_20_epoch'
   dataset_type: 'custom_aligned'
   dataset_config:
     dataset_path: 'data/processed'

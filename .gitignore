@@ -5,3 +5,4 @@
 *.out
 results/processed/BrownianBridge/checkpoint
 results/BBDM_10_epoch/BrownianBridge/checkpoint
+results/BBDM_20_epoch/BrownianBridge/checkpoint
