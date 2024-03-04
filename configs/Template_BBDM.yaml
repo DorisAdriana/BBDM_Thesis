@@ -18,7 +18,7 @@ data:
   dataset_type: 'custom_aligned'
   dataset_config:
     dataset_path: 'data/processed'
-    image_size: 256 #64 #this should probably be 64, the needed output
+    image_size: 256 #64 
     channels: 3
     to_normal: True
     flip: False
