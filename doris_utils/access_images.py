@@ -83,6 +83,40 @@ import numpy as np
 
 
 # ###### 4DFLOW ######
+import numpy as np
+def pad_to_size(arr, target_shape):
+    """
+    Pads a 4D array to the specified target shape with zeros.
+    
+    Parameters:
+    - arr: numpy.ndarray, the input 4D array to pad.
+    - target_shape: tuple of int, the target shape to pad the array to. Should be of the form (n, c, h, w) where
+      n is the target size for the first dimension,
+      c is the target size for the second dimension,
+      h is the target size for the third dimension, and
+      w is the target size for the fourth dimension.
+      
+    Returns:
+    - Padded numpy.ndarray of shape target_shape.
+    """
+    # Ensure the array is 4D and target_shape is valid
+    assert arr.ndim == 4, "Input array must be 4-dimensional."
+    assert len(target_shape) == 4, "Target shape must have 4 dimensions."
+    
+    # Calculate the padding needed for each dimension
+    pad_width = []
+    for current_size, target_size in zip(arr.shape, target_shape):
+        total_pad = max(target_size - current_size, 0)
+        # Distribute padding equally on both sides
+        pad_width.append((total_pad // 2, total_pad - total_pad // 2))
+    
+    # Apply padding
+    padded_arr = np.pad(arr, pad_width=pad_width, mode='constant', constant_values=0)
+    
+    return padded_arr
+
+# Example usage
+target_shape = (288, 288, 88, 15)  # Desired shape after padding
 
 finalfolders = os.listdir("/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Temp/dawezenberg/Data/4dflow")
 path = "my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/4dflow"
@@ -100,6 +134,7 @@ for folder in finalfolders:
             img = nib.load(path+"/"+folder+"/"+file4d).get_fdata()
             img = img[:,:,:,::2]
             img_arr = np.array(img)
+            img_arr = pad_to_size(img_arr, target_shape)
             print(img_arr.shape)
             ##if img.shape == (256, 256, 70, 30):
 #                 ## print(img.shape)
