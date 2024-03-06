@@ -7,3 +7,4 @@ results/processed/BrownianBridge/checkpoint
 results/BBDM_10_epoch/BrownianBridge/checkpoint
 results/BBDM_20_epoch/BrownianBridge/checkpoint
 results/VQGAN
+results/LBBDM_f4_20_epoch/LBBDM-f4/checkpoint

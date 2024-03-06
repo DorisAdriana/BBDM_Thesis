@@ -87,7 +87,7 @@ model: !!python/object:argparse.Namespace
     use_ema: true
   VQGAN: !!python/object:argparse.Namespace
     params: !!python/object:argparse.Namespace
-      ckpt_path: results/VQGAN/CelebAMaskHQ-f4.ckpt
+      ckpt_path: results/VQGAN/model.ckpt
       ddconfig: !!python/object:argparse.Namespace
         attn_resolutions: []
         ch: 128
