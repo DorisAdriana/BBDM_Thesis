@@ -119,36 +119,64 @@ def pad_to_size(arr, target_shape):
 # processing is verified, output will be quite some black slices, think of impact of this
 target_shape = (320, 320, 88, 15)  # Desired shape after padding
 
+# finalfolders = os.listdir("/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/4dflow")
+# path = "my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/4dflow"
+# outputdir = 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/4dflow'
+# pattern = re.compile(r'TOW(?:_VOL)?(\d+)_')
+
+# for folder in finalfolders:
+#     for file in os.listdir(path+"/"+folder):
+#         if "-mag" in file:
+#             file4d = file
+#             img = nib.load(path+"/"+folder+"/"+file4d).get_fdata()
+#             img = img[:,:,:,::2]
+#             img_arr = np.array(img)
+#             img_arr = pad_to_size(img_arr, target_shape)
+#             # print(img_arr[160,160,40,:])
+#             norm_img_arr = 255 * (img_arr - np.min(img_arr)) / (np.max(img_arr) - np.min(img_arr))
+#             norm_img_arr = norm_img_arr.astype(np.uint8)
+#             img = norm_img_arr
+#             # print(img[160,160,40,:])
+#             match = pattern.search(file4d)
+#             for i in range(img.shape[2]):
+#                 for j in range(img.shape[3]):
+#                     slice_2d = img[:,:,i,j]
+#                     image = Image.fromarray(slice_2d)
+#                     # print(image.mode)
+#                     if image.mode != 'RGB':
+#                         image = image.convert('RGB')
+#                     filename = f'img_{match.group(0)}_slice_{i+1}_{j+1}.jpg'
+#                     file_path = os.path.join(outputdir, filename)
+#                     print(file4d, slice_2d.shape, i, j, filename)
+#                     image.save(file_path, 'JPEG')
+#     print(folder)
+# print('Finished')
+
 finalfolders = os.listdir("/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/4dflow")
-path = "my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/4dflow"
-outputdir = 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/4dflow'
+path = "my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/3d_cine"
+outputdir = 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'
 pattern = re.compile(r'TOW(?:_VOL)?(\d+)_')
 
 for folder in finalfolders:
     for file in os.listdir(path+"/"+folder):
-        if "-mag" in file:
-            file4d = file
-            img = nib.load(path+"/"+folder+"/"+file4d).get_fdata()
-            img = img[:,:,:,::2]
-            img_arr = np.array(img)
-            img_arr = pad_to_size(img_arr, target_shape)
-            # print(img_arr[160,160,40,:])
-            norm_img_arr = 255 * (img_arr - np.min(img_arr)) / (np.max(img_arr) - np.min(img_arr))
-            norm_img_arr = norm_img_arr.astype(np.uint8)
-            img = norm_img_arr
-            # print(img[160,160,40,:])
-            match = pattern.search(file4d)
-            for i in range(img.shape[2]):
-                for j in range(img.shape[3]):
-                    slice_2d = img[:,:,i,j]
-                    image = Image.fromarray(slice_2d)
-                    # print(image.mode)
-                    if image.mode != 'RGB':
-                        image = image.convert('RGB')
-                    filename = f'img_{match.group(0)}_slice_{i+1}_{j+1}.jpg'
-                    file_path = os.path.join(outputdir, filename)
-                    print(file4d, slice_2d.shape, i, j, filename)
-                    image.save(file_path, 'JPEG')
+        file3d = file
+        img = nib.load(path+"/"+folder+"/"+file3d).get_fdata()
+        img_arr = np.array(img)
+        img_arr = pad_to_size(img_arr, target_shape)
+        norm_img_arr = 255 * (img_arr - np.min(img_arr)) / (np.max(img_arr) - np.min(img_arr))
+        norm_img_arr = norm_img_arr.astype(np.uint8)
+        img = norm_img_arr
+        match = pattern.search(file3d)
+        for i in range(img.shape[2]):
+            for j in range(img.shape[3]):
+                slice_2d = img[:,:,i,j]
+                image = Image.fromarray(slice_2d)
+                if image.mode != 'RGB':
+                    image = image.convert('RGB')
+                filename = f'img_{match.group(0)}_slice_{i+1}_{j+1}.jpg'
+                file_path = os.path.join(outputdir, filename)
+                # print(file3d, slice_2d.shape, i, j, filename)
+                image.save(file_path, 'JPEG')
     print(folder)
 print('Finished')
 
