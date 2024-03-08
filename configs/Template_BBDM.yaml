@@ -14,11 +14,11 @@ testing:
   sample_num: 5
 
 data:
-  dataset_name: 'BBDM_20_epoch'
+  dataset_name: 'BBDM_20_epoch_98scans'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: 'data/processed'
-    image_size: 256 #64 
+    dataset_path: 'data/processed2'
+    image_size: 320 #256 #64 
     channels: 3
     to_normal: True
     flip: False
@@ -80,7 +80,7 @@ model:
       max_var: 1.0 # maximum variance
 
       UNetParams:
-        image_size: 256 # 64
+        image_size: 320 # 256 # 64
         in_channels: 6
         model_channels: 128
         out_channels: 3
@@ -96,7 +96,7 @@ model:
         conv_resample: True
         dims: 2
         num_heads: 8
-        num_head_channels: 256 #64
+        num_head_channels: 64
         use_scale_shift_norm: True
         resblock_updown: True
         use_spatial_transformer: False

@@ -152,33 +152,33 @@ target_shape = (320, 320, 88, 15)  # Desired shape after padding
 #     print(folder)
 # print('Finished')
 
-finalfolders = os.listdir("/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/4dflow")
-path = "my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/3d_cine"
-outputdir = 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'
-pattern = re.compile(r'TOW(?:_VOL)?(\d+)_')
+# finalfolders = os.listdir("/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/4dflow")
+# path = "my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/3d_cine"
+# outputdir = 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'
+# pattern = re.compile(r'TOW(?:_VOL)?(\d+)_')
 
-for folder in finalfolders:
-    for file in os.listdir(path+"/"+folder):
-        file3d = file
-        img = nib.load(path+"/"+folder+"/"+file3d).get_fdata()
-        img_arr = np.array(img)
-        img_arr = pad_to_size(img_arr, target_shape)
-        norm_img_arr = 255 * (img_arr - np.min(img_arr)) / (np.max(img_arr) - np.min(img_arr))
-        norm_img_arr = norm_img_arr.astype(np.uint8)
-        img = norm_img_arr
-        match = pattern.search(file3d)
-        for i in range(img.shape[2]):
-            for j in range(img.shape[3]):
-                slice_2d = img[:,:,i,j]
-                image = Image.fromarray(slice_2d)
-                if image.mode != 'RGB':
-                    image = image.convert('RGB')
-                filename = f'img_{match.group(0)}_slice_{i+1}_{j+1}.jpg'
-                file_path = os.path.join(outputdir, filename)
-                # print(file3d, slice_2d.shape, i, j, filename)
-                image.save(file_path, 'JPEG')
-    print(folder)
-print('Finished')
+# for folder in finalfolders:
+#     for file in os.listdir(path+"/"+folder):
+#         file3d = file
+#         img = nib.load(path+"/"+folder+"/"+file3d).get_fdata()
+#         img_arr = np.array(img)
+#         img_arr = pad_to_size(img_arr, target_shape)
+#         norm_img_arr = 255 * (img_arr - np.min(img_arr)) / (np.max(img_arr) - np.min(img_arr))
+#         norm_img_arr = norm_img_arr.astype(np.uint8)
+#         img = norm_img_arr
+#         match = pattern.search(file3d)
+#         for i in range(img.shape[2]):
+#             for j in range(img.shape[3]):
+#                 slice_2d = img[:,:,i,j]
+#                 image = Image.fromarray(slice_2d)
+#                 if image.mode != 'RGB':
+#                     image = image.convert('RGB')
+#                 filename = f'img_{match.group(0)}_slice_{i+1}_{j+1}.jpg'
+#                 file_path = os.path.join(outputdir, filename)
+#                 # print(file3d, slice_2d.shape, i, j, filename)
+#                 image.save(file_path, 'JPEG')
+#     print(folder)
+# print('Finished')
 
 
 
@@ -224,45 +224,57 @@ print('Finished')
 
 
 ###### Folders in right location ######
+
+folders=['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW037', 'TOW040',
+          'TOW042', 'TOW044', 'TOW046', 'TOW048', 'TOW049', 'TOW054', 'TOW055', 'TOW057', 'TOW063', 'TOW068', 'TOW073', 'TOW074', 'TOW075', 
+          'TOW080', 'TOW082', 'TOW084', 'TOW088', 'TOW092', 'TOW097', 'TOW100', 'TOW106', 'TOW112', 'TOW113', 'TOW118', 'TOW119', 'TOW125', 
+          'TOW128', 'TOW130', 'TOW132', 'TOW137', 'TOW139', 'TOW140', 'TOW141', 'TOW142', 'TOW143', 'TOW144', 'TOW146', 'TOW201', 'TOW213', 
+          'TOW216', 'TOW218', 'TOW224', 'TOW239', 'TOW246', 'TOW247', 'TOW248', 'TOW251', 'TOW254', 'TOW257', 'TOW259', 'TOW286', 'TOW321', 
+          'TOW363', 'TOW503', 'TOW512', 'TOW513', 'TOW523', 'TOW544', 'TOW549', 'TOW553', 'TOW557', 'TOW563', 'TOW571', 'TOW600', 'TOW605', 
+          'TOW700', 'TOW_VOL01', 'TOW_VOL02', 'TOW_VOL03', 'TOW_VOL04', 'TOW_VOL05', 'TOW_VOL06', 'TOW_VOL07', 'TOW_VOL08', 'TOW_VOL09', 
+          'TOW_VOL10', 'TOW_VOL11', 'TOW_VOL12', 'TOW_VOL13', 'TOW_VOL14', 'TOW_VOL15', 'TOW_VOL16', 'TOW_VOL18', 'TOW_VOL19', 'TOW_VOL20']
+# split
+# train: 79, 47, 16, 16
+# test/val: 19, 11, 4 ,4
+
+patients = folders[0:79]
+volunteers = folders[79:99]
+trainfolders = patients[0:47]+volunteers[0:11]
+testfolders = patients[47:63]+volunteers[11:15]
+valfolders = patients[63:80]+volunteers[15:19]
+# print("train",train)
+# print("test",test)
+# print("val",val)
+
 # ## Adapt folder name and path and use this to store data in the right folders
-# ### SET VAR
-# finalfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01', 'TOW224', 'TOW048', 'TOW216', 'TOW_VOL04', 'TOW013', 'TOW254', 'TOW_VOL07',
-#                  'TOW_VOL09', 'TOW132', 'TOW125', 'TOW049', 'TOW_VOL10', 'TOW259', 'TOW080', 'TOW257', 'TOW042', 'TOW_VOL002', 'TOW113', 'TOW097', 'TOW040', 
-#                  'TOW251', 'TOW046', 'TOW_VOL05', 'TOW201', 'TOW_VOL06', 'TOW017', 'TOW011', 'TOW018']
+### SET VAR
+import os
+import shutil
 
-# trainfolders = ['TOW037', 'TOW106', 'TOW068', 'TOW033', 'TOW_VOL03', 'TOW_VOL01', 'TOW224', 'TOW048', 'TOW216', 'TOW_VOL04', 'TOW013', 'TOW254', 'TOW_VOL07',
-#                  'TOW_VOL09', 'TOW132', 'TOW125', 'TOW049', 'TOW_VOL10', 'TOW259', 'TOW080']
-# testfolders = ['TOW257', 'TOW042', 'TOW_VOL002', 'TOW113', 'TOW097', 'TOW040', 
-#                  'TOW251']
-# valfolders = ['TOW046', 'TOW_VOL05', 'TOW201', 'TOW_VOL06', 'TOW017', 'TOW011', 'TOW018']
+# Define the source folders and the destination folders
+source_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/4dflow', 'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'}
+destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed2/val/A',
+                       'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed2/val/B'}
 
-# import os
-# import shutil
+# Function to copy files for the first 20 scans
+def copy_files_for_scans(source, destination):
+    # Loop through the first 20 scans
+    for scan in valfolders: 
+        # For each scan, loop through the slices
+        for N in range(1, 89):
+            for M in range(1, 16):
+                file_name = f'img_{scan}__slice_{N}_{M}.jpg'
+                source_file = os.path.join(source, file_name)
+                destination_file = os.path.join(destination, file_name)
+                # Copy file if it exists
+                if os.path.exists(source_file):
+                    shutil.copy(source_file, destination_file)
+                else:
+                    print(f"File does not exist: {source_file}")
 
-# # Define the source folders and the destination folders
-# source_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/4dflow', 'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'}
-# destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed/train/A',
-#                        'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed/train/B'}
+# Run the copy function for each folder
+for key in source_folders:
+    copy_files_for_scans(source_folders[key], destination_folders[key])
 
-# # Function to copy files for the first 20 scans
-# def copy_files_for_scans(source, destination):
-#     # Loop through the first 20 scans
-#     for scan in trainfolders: 
-#         # For each scan, loop through the slices
-#         for N in range(1, 71):
-#             for M in range(1, 16):
-#                 file_name = f'img_{scan}__slice_{N}_{M}.jpg'
-#                 source_file = os.path.join(source, file_name)
-#                 destination_file = os.path.join(destination, file_name)
-#                 # Copy file if it exists
-#                 if os.path.exists(source_file):
-#                     shutil.copy(source_file, destination_file)
-#                 else:
-#                     print(f"File does not exist: {source_file}")
-
-# # Run the copy function for each folder
-# for key in source_folders:
-#     copy_files_for_scans(source_folders[key], destination_folders[key])
-
-# print("Finished")
+print("Finished")
 
