@@ -32,13 +32,13 @@ valfolders = patients[63:80]+volunteers[15:19]
 ### CHANGE THIS TO DESIRED FOLDER
 # Define the source folders and the destination folders
 source_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/4dflow', 'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/processed/bSSFP'}
-destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed2/val/A',
-                       'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed2/val/B'}
+destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed2_cropped/train/A',
+                       'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/processed2_cropped/train/B'}
 
 # Function to copy files for the first 20 scans
 def copy_files_for_scans(source, destination):
-    # Loop through the first 20 scans
-    for scan in valfolders: 
+    # Loop through the first 2s0 scans
+    for scan in trainfolders: 
         # For each scan, loop through the slices
         for N in range(1, 89):
             for M in range(1, 16):
