@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --partition=luna-long
-#SBATCH --time=24:00:00
+#SBATCH --time=60:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=train_LBBDM_20e
-#SBATCH --output=train_LBBBDM_20e%A.out
+#SBATCH --job-name=train_BBDM_60e_98s_256
+#SBATCH --output=train_BBBDM_60e_98s_256%A.out
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
@@ -13,7 +13,7 @@ set -eu
 source $HOME/my-scratch/env/bin/activate
 
 srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/main.py \
-    --config configs/Template_LBBDM_f4.yaml \
+    --config configs/Template_BBDM.yaml \
     --train \
     --sample_at_start \
     --save_top \

@@ -16,9 +16,10 @@ data:
   dataset_name: 'LBBDM_f4_20_epoch'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: 'data/processed'
-    image_size: 256 # 64
+    dataset_path: 'data/processed2_cropped'
+    image_size: 256 # 256
     channels: 3
+
     to_normal: True
     flip: False
   train:
@@ -102,7 +103,7 @@ model:
       max_var: 1.0 # maximum variance
 
       UNetParams:
-        image_size: 256 #64
+        image_size: s64 #256 #64
         in_channels: 3
         model_channels: 128
         out_channels: 3
@@ -118,7 +119,7 @@ model:
         conv_resample: True
         dims: 2
         num_heads: 8
-        num_head_channels: 256 #64s
+        num_head_channels: 64 
         use_scale_shift_norm: True
         resblock_updown: True
         use_spatial_transformer: False

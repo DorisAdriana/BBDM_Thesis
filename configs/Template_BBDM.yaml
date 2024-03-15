@@ -2,7 +2,7 @@
 
 runner: "BBDMRunner"
 training:
-  n_epochs: 40 # 200
+  n_epochs: 60 # 200
   n_steps: 400000
   save_interval: 20
   sample_interval: 2
@@ -14,11 +14,11 @@ testing:
   sample_num: 5
 
 data:
-  dataset_name: 'BBDM_40e_98s_320'
+  dataset_name: 'BBDM_60e_98s_256'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: 'data/processed2'
-    image_size: 320 #256 #64 
+    dataset_path: 'data/processed2_cropped'
+    image_size: 256 #320 #64 
     channels: 3
     to_normal: True
     flip: False
@@ -80,7 +80,7 @@ model:
       max_var: 1.0 # maximum variance
 
       UNetParams:
-        image_size: 320 #256 # 64
+        image_size: 256 # 320 # 64
         in_channels: 6
         model_channels: 128
         out_channels: 3

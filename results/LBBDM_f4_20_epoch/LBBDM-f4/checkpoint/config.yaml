@@ -16,9 +16,9 @@ args: !!python/object:argparse.Namespace
 data: !!python/object:argparse.Namespace
   dataset_config: !!python/object:argparse.Namespace
     channels: 3
-    dataset_path: data/processed
+    dataset_path: data/processed2_cropped
     flip: false
-    image_size: 256
+    image_size: 64
     to_normal: true
   dataset_name: LBBDM_f4_20_epoch
   dataset_type: custom_aligned
@@ -57,10 +57,10 @@ model: !!python/object:argparse.Namespace
         context_dim: null
         conv_resample: true
         dims: 2
-        image_size: 256
+        image_size: 16
         in_channels: 3
         model_channels: 128
-        num_head_channels: 256
+        num_head_channels: 64
         num_heads: 8
         num_res_blocks: 2
         out_channels: 3
