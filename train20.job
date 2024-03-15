@@ -3,7 +3,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --job-name=train_LBBDM_20e
-#SBATCH --output=train_LBBBDM_20e%A.out
+#SBATCH --output=train_LBBDM_20e%A.out
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
