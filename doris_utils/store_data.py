@@ -25,9 +25,9 @@ volunteers = folders[79:99]
 trainfolders = patients[0:47]+volunteers[0:11]
 testfolders = patients[47:63]+volunteers[11:15]
 valfolders = patients[63:80]+volunteers[15:19]
-# print("train",train)
-# print("test",test)
-# print("val",val)
+print("train",trainfolders)
+print("test",testfolders)
+print("val",valfolders)
 
 ### CHANGE THIS TO DESIRED FOLDER
 # Define the source folders and the destination folders
@@ -51,8 +51,8 @@ def copy_files_for_scans(source, destination):
                 else:
                     print(f"File does not exist: {source_file}")
 
-# Run the copy function for each folder
-for key in source_folders:
-    copy_files_for_scans(source_folders[key], destination_folders[key])
+# # Run the copy function for each folder
+# for key in source_folders:
+#     copy_files_for_scans(source_folders[key], destination_folders[key])
 
-print("Finished")
+# print("Finished")
