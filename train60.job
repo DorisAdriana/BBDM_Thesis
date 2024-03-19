@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=luna-long
-#SBATCH --time=60:00:00
+#SBATCH --time=7-00:00:00
 #SBATCH --nodes=1
 #SBATCH --job-name=train_BBDM_60e_98s_256
 #SBATCH --output=train_BBBDM_60e_98s_256%A.out

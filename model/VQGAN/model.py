@@ -235,7 +235,7 @@ class Model(nn.Module):
                                          out_channels=block_out,
                                          temb_channels=self.temb_ch,
                                          dropout=dropout))
-                block_in = block_out
+                block_ian = block_out
                 if curr_res in attn_resolutions:
                     attn.append(AttnBlock(block_in))
             down = nn.Module()

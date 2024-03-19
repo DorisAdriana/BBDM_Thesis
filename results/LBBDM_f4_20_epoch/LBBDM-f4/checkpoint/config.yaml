@@ -6,13 +6,13 @@ args: !!python/object:argparse.Namespace
   max_steps: null
   port: '12355'
   result_path: results
-  resume_model: null
+  resume_model: results/BBDM_60e_98s_256/BrownianBridge/checkpoint/last_model.pth
   resume_optim: null
-  sample_at_start: true
-  sample_to_eval: false
-  save_top: true
+  sample_at_start: false
+  sample_to_eval: true
+  save_top: false
   seed: 1234
-  train: true
+  train: false
 data: !!python/object:argparse.Namespace
   dataset_config: !!python/object:argparse.Namespace
     channels: 3
@@ -57,7 +57,7 @@ model: !!python/object:argparse.Namespace
         context_dim: null
         conv_resample: true
         dims: 2
-        image_size: s64
+        image_size: 64
         in_channels: 3
         model_channels: 128
         num_head_channels: 64
@@ -107,6 +107,7 @@ model: !!python/object:argparse.Namespace
         target: torch.nn.Identity
       n_embed: 8192
   latent_before_quant_conv: false
+  model_load_path: results/BBDM_60e_98s_256/BrownianBridge/checkpoint/last_model.pth
   model_name: LBBDM-f4
   model_type: LBBDM
   normalize_latent: false
@@ -127,7 +128,7 @@ training: !!python/object:argparse.Namespace
   - !!python/object/apply:torch.device
     - cuda
     - 0
-  n_epochs: 1
+  n_epochs: 20
   n_steps: 200000
   sample_interval: 2
   save_interval: 2
