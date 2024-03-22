@@ -23,7 +23,7 @@ for scan_id in scan_ids:
             folder_path = os.path.join(input_directory, folder_name)
             found_image = False
             for file in sorted(os.listdir(folder_path)):
-                if file.endswith(".jpg"):
+                if file.endswith(".png"):
                     img_path = os.path.join(folder_path, file)
                     img = Image.open(img_path)
                     img_array = np.array(img)
@@ -42,7 +42,7 @@ for scan_id in scan_ids:
     if slice_b_arrays:
         scan_array = np.stack(slice_b_arrays, axis=3)
         nifti_img = nib.Nifti1Image(scan_array, affine=np.eye(4))
-        output_path = os.path.join(output_directory, f"scan_{scan_id}.nii")
+        output_path = os.path.join(output_directory, f"scan_{scan_id}.nii.gz")
         nib.save(nifti_img, output_path)
         print(f"Saved {output_path}.")
     else:
