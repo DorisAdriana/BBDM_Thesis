@@ -2,7 +2,7 @@
 #SBATCH --partition=luna-long
 #SBATCH --time=48:00:00
 #SBATCH --nodes=1
-#SBATCH --job-nameBBDM_predict
+#SBATCH --job-name=BBDM_predict
 #SBATCH --output=BBDM_predict%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
