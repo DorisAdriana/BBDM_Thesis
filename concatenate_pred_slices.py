@@ -24,7 +24,7 @@ for scan_id in scan_ids:
             folder_path = os.path.join(input_directory, folder_name)
             found_image = False
             for file in sorted(os.listdir(folder_path)):
-                if file.endswith(".jpg"):
+                if file.endswith(".png"):
                     img_path = os.path.join(folder_path, file)
                     img = Image.open(img_path)
                     img_array = np.array(img)
@@ -49,5 +49,7 @@ for scan_id in scan_ids:
             print(f"Warning: No images were found for 'b'={b} in scan {scan_id}. Skipping this 'b' value.")
 
 # export nnUNet_raw_data_base=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/nnUnet_raw_data”
-# export nnUNet_preprocessed“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/nnUnet_cropped_data”
+# export nnUNet_raw_data_base=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/nnUnet_raw_data”
+# export RESULTS_FOLDER=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/modelweights”
+
 # export RESULTS_FOLDER=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/modelweights”
