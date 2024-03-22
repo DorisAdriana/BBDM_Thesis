@@ -52,4 +52,4 @@ for scan_id in scan_ids:
 # export nnUNet_raw_data_base=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/nnUnet_raw_data”
 # export RESULTS_FOLDER=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/modelweights”
 
-# export RESULTS_FOLDER=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/modelweights”
+# nnUNet_predict -i $nnUNet_raw_data_base/nnUNet_raw_data/Task005_Prostate/imagesTs/ -o OUTPUT_DIRECTORY -t 5 -m 3d_fullres
