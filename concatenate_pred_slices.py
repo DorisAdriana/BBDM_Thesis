@@ -13,9 +13,10 @@ input_directory = "my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/res
 
 # Ensure output directory exists
 os.makedirs(output_directory, exist_ok=True)
+# Ensure the output directory exists
+os.makedirs(output_directory, exist_ok=True)
 
 for scan_id in scan_ids:
-    slice_b_arrays = []
     for b in range(1, num_slices_b + 1):
         slice_a_images = []
         for a in range(1, num_slices_a + 1):
@@ -23,7 +24,7 @@ for scan_id in scan_ids:
             folder_path = os.path.join(input_directory, folder_name)
             found_image = False
             for file in sorted(os.listdir(folder_path)):
-                if file.endswith(".png"):
+                if file.endswith(".jpg"):
                     img_path = os.path.join(folder_path, file)
                     img = Image.open(img_path)
                     img_array = np.array(img)
@@ -34,20 +35,18 @@ for scan_id in scan_ids:
                 print(f"No suitable image found in {folder_path}.")
         
         if slice_a_images:
+            # For each 'b', create a 3D array (stacking along the third dimension, axis=2)
             slice_b_array = np.stack(slice_a_images, axis=2)
-            slice_b_arrays.append(slice_b_array)
+            
+            # Convert the 3D array into a NIfTI image
+            nifti_img = nib.Nifti1Image(slice_b_array, affine=np.eye(4))
+            
+            # Save the NIfTI image to a .nii.gz file, named according to the scan and 'b' value
+            output_path = os.path.join(output_directory, f"scan_{scan_id}_b{b:02}.nii.gz")
+            nib.save(nifti_img, output_path)
+            print(f"Saved {output_path}.")
         else:
-            print(f"Warning: No images were found for 'b'={b} in scan {scan_id}. Skipping this slice.")
-    
-    if slice_b_arrays:
-        scan_array = np.stack(slice_b_arrays, axis=3)
-        nifti_img = nib.Nifti1Image(scan_array, affine=np.eye(4))
-        output_path = os.path.join(output_directory, f"scan_{scan_id}.nii.gz")
-        nib.save(nifti_img, output_path)
-        print(f"Saved {output_path}.")
-    else:
-        print(f"Warning: No data to save for scan {scan_id}.")
-
+            print(f"Warning: No images were found for 'b'={b} in scan {scan_id}. Skipping this 'b' value.")
 
 # export nnUNet_raw_data_base=“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/nnUnet_raw_data”
 # export nnUNet_preprocessed“/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/Data/Unet/nnUnet_cropped_data”
