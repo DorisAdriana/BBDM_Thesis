@@ -17,7 +17,7 @@ data:
   dataset_name: 'BBDM_60e_98s_256'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: 'data/processed2_cropped'
+    dataset_path: 'data/processed2_cropped' #probably overwritten by jobfile train command to correct shape dataset path
     image_size: 256 #320 #64 
     channels: 3
     to_normal: True
