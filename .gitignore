@@ -13,3 +13,4 @@ results/VQGAN
 results/LBBDM_f4_20_epoch/LBBDM-f4/checkpoint
 results/BBDM_20_epoch_98scans/BrownianBridge/checkpoint
 results
+Unet_input
