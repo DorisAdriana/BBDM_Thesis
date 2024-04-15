@@ -2,7 +2,7 @@
 
 runner: "BBDMRunner"
 training:
-  n_epochs: 60 # 200
+  n_epochs: 1 #60 # 200
   n_steps: 400000
   save_interval: 20
   sample_interval: 2
@@ -14,10 +14,10 @@ testing:
   sample_num: 5
 
 data:
-  dataset_name: 'BBDM_60e_98s_256'
+  dataset_name: 'BBDM_base'
   dataset_type: 'custom_aligned'
   dataset_config:
-    dataset_path: 'data/processed2_cropped' #probably overwritten by jobfile train command to correct shape dataset path
+    dataset_path: 'data/processed2_cropped' 
     image_size: 256 #320 #64 
     channels: 3
     to_normal: True
