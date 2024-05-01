@@ -21,7 +21,7 @@ data:
     image_size: 256 #320 #64 
     channels: 3
     to_normal: True
-    flip: False
+    flip: True
   train:
     batch_size: 8
     shuffle: True

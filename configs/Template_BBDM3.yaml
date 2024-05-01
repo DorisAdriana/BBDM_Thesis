@@ -69,7 +69,7 @@ model:
     params:
       mt_type: 'linear' # options {'linear', 'sin'}
       objective: 'grad' # options {'grad', 'noise', 'ysubx'}
-      loss_type: 'l1' # options {'l1', 'l2'}
+      loss_type: 'l2' # options {'l1', 'l2'}
 
       skip_sample: True
       sample_type: 'linear' # options {"linear", "sin"}
