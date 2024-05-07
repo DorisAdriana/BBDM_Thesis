@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --partition=luna-short
+#SBATCH --time=3:00:00
+#SBATCH --nodes=1
+#SBATCH --job-name=val
+#SBATCH --output=my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/val%A.out
+#SBATCH --mem=40G
+#SBATCH --cpus-per-task=6
+
+
+set -eu
+
+source $HOME/my-scratch/env/bin/activate
+
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/BBDM_train_val.py \
+
+
+

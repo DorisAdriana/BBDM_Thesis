@@ -2,8 +2,8 @@
 #SBATCH --partition=luna-long
 #SBATCH --time=7-00:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=ABtopconfigs
-#SBATCH --output=ABtopconfigs%A.out
+#SBATCH --job-name=topconfigs2
+#SBATCH --output=topconfigs2_%A.out
 #SBATCH --mem=80G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
@@ -17,7 +17,7 @@ srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/main
     --train \
     --sample_at_start \
     --save_top \
-    --gpu_ids 0 
+    --gpu_ids 0 s
   
 
 
