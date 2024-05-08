@@ -1,12 +1,49 @@
+import argparse
+import yaml
+import os
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
-import os
 from tqdm import tqdm
 from torchvision.utils import save_image
 
+# Argument Parser Setup
+parser = argparse.ArgumentParser(description="Run the neural network training with configurable parameters.")
+parser.add_argument('--config', type=str, default='config.yaml', help='Path to the configuration YAML file.')
+parser.add_argument('--epochs', type=int, help='Number of epochs to train.')
+parser.add_argument('--batch_size', type=int, help='Batch size for training, validation, and testing.')
+parser.add_argument('--learning_rate', type=float, help='Learning rate for the optimizer.')
+parser.add_argument('--device', type=str, choices=['auto', 'cuda', 'cpu'], help='Compute device to use ("auto", "cuda", or "cpu").')
+
+args = parser.parse_args()
+
+# Load configuration from YAML file
+with open(args.config, 'r') as file:
+    config = yaml.safe_load(file)
+
+# Override config with command line arguments if provided
+if args.epochs:
+    config['epochs'] = args.epochs
+if args.batch_size:
+    config['batch_size']['train'] = args.batch_size
+    config['batch_size']['val'] = args.batch_size
+    config['batch_size']['test'] = args.batch_size
+if args.learning_rate:
+    config['learning_rate'] = args.learning_rate
+if args.device:
+    config['device'] = args.device
+
+# Define device
+device_choice = config['device']
+if device_choice == 'auto':
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+elif device_choice in ['cuda', 'cpu']:
+    device = torch.device(device_choice)
+
+# Dataset Class
 class ImagePairDataset(Dataset):
     def __init__(self, base_dir, mode='train'):
         self.mode = mode
@@ -38,22 +75,23 @@ class ImagePairDataset(Dataset):
         img_B = transforms.ToTensor()(img_B)
         img_B = transforms.Normalize(mean=[0.5], std=[0.5])(img_B)
 
-        return img_tensor, img_B, self.filenames[idx]  # Return the filename as well
+        return img_tensor, img_B, self.filenames[idx]
 
-# Example setup of the datasets and dataloaders
-base_dir = 'data/slices_n98_s320x320_z88'
-train_dataset = ImagePairDataset(base_dir, 'train')
-val_dataset = ImagePairDataset(base_dir, 'val')
-test_dataset = ImagePairDataset(base_dir, 'test')
 
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+# Setup of the datasets and dataloaders
+base_dir = config['base_dir']
+train_dataset = ImagePairDataset(base_dir, config['mode']['train'])
+val_dataset = ImagePairDataset(base_dir, config['mode']['val'])
+test_dataset = ImagePairDataset(base_dir, config['mode']['test'])
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+train_loader = DataLoader(train_dataset, batch_size=config['batch_size']['train'], shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=config['batch_size']['val'], shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=config['batch_size']['test'], shuffle=False)
 
+Can you also provide me the corresponding code for the parts:
+# Instantiate and train model, etc.
+
+# The remainder of your neural network code and training loop here
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(ConvBlock, self).__init__()
@@ -182,7 +220,7 @@ def predict_and_save(model, loader, name, architecture='Unetmultiinput1'):
     output_dir = os.path.join(architecture, 'predictions', name)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        
+
     model.eval()
     with torch.no_grad():
         for inputs, _, filenames in tqdm(loader, desc='Predicting'):  # Adjust to unpack filenames
