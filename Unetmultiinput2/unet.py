@@ -3,47 +3,53 @@ from torchvision import transforms
 from PIL import Image
 import os
 
+
 class ImagePairDataset(Dataset):
-    def __init__(self, root_dir, mode='train', transform=None):
-        self.root_dir = os.path.join(root_dir, mode)
-        self.transform = transform
-        self.images_A = sorted(os.listdir(os.path.join(self.root_dir, 'A')))
-        self.images_B = sorted(os.listdir(os.path.join(self.root_dir, 'B')))
+    def __init__(self, base_dir, mode='train'):
+        self.mode = mode
+        self.base_dir = base_dir
+        self.dirs = {
+            'original': os.path.join(base_dir, mode, 'A'),
+            'velx': os.path.join(base_dir + '_velx', mode),
+            'vely': os.path.join(base_dir + '_vely', mode),
+            'velz': os.path.join(base_dir + '_velz', mode)
+        }
+        self.filenames = sorted(os.listdir(self.dirs['original']))
 
     def __len__(self):
-        return len(self.images_A)
+        return len(self.filenames)
 
     def __getitem__(self, idx):
-        # Fetch four images corresponding to each 'A' image as an example
-        img_paths = [os.path.join(self.root_dir, 'A', self.images_A[idx]) for _ in range(4)]
-        imgs = [Image.open(p).convert('L') for p in img_paths]
+        imgs = []
+        for key in ['original', 'velx', 'vely', 'velz']:
+            img_path = os.path.join(self.dirs[key], self.filenames[idx])
+            img = Image.open(img_path).convert('L')
+            img = transforms.ToTensor()(img)
+            imgs.append(img)
 
-        # Apply transformation to each image
-        if self.transform:
-            imgs = [self.transform(img) for img in imgs]
-        img_tensor = torch.stack(imgs, dim=0)  # Stack to shape [4, H, W]
+        # Stack images along channel dimension to create a multi-channel input tensor
+        img_tensor = torch.cat(imgs, dim=0)  # Concatenate along the channel dimension
 
-        img_B_path = os.path.join(self.root_dir, 'B', self.images_B[idx])
+        # Normalize the 4-channel image tensor
+        img_tensor = transforms.Normalize(mean=[0.5]*4, std=[0.5]*4)(img_tensor)
+
+        # Fetch the target image
+        img_B_path = os.path.join(self.dirs['original'], '..', 'B', self.filenames[idx])
         img_B = Image.open(img_B_path).convert('L')
-        if self.transform:
-            img_B = self.transform(img_B)
+        img_B = transforms.ToTensor()(img_B)
+        img_B = transforms.Normalize(mean=[0.5], std=[0.5])(img_B)
 
         return img_tensor, img_B
 
-# Define transformations with separate normalizations for each channel
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5, 0.5])
-])
-
-print('Initialize dataloaders')
-train_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'train', transform)
-val_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'val', transform)
-test_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'test', transform)
+# Define transformations inside the dataset to ensure they are applied correctly
+train_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'train')
+val_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'val')
+test_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'test')
 
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+
 
 import torch
 import torch.nn as nn
