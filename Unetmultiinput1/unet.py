@@ -5,6 +5,7 @@ from torchvision import transforms
 from PIL import Image
 import os
 from tqdm import tqdm
+from torchvision.utils import save_image
 
 class ImagePairDataset(Dataset):
     def __init__(self, base_dir, mode='train'):
@@ -138,7 +139,7 @@ model = UNet().to(device)
 criterion = nn.L1Loss()  # MAE
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-def train_model(model, train_loader, val_loader, epochs):
+def train_model(model, train_loader, val_loader, epochs, name, architecture='Unetmultiinput1'):
     print('Starting training')
     for epoch in range(epochs):
         model.train()
@@ -171,13 +172,16 @@ def train_model(model, train_loader, val_loader, epochs):
         print(f'Epoch {epoch+1}, Validation MAE Loss: {val_loss}')
 
     # Save the model
-    torch.save(model.state_dict(), 'model1.pth')
-    print("Model saved!")
-
-def predict_and_save(model, loader, output_dir='predictions'):
+    output_dir = os.path.join(architecture, 'saved_models')
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    torch.save(model.state_dict(), os.path.join(output_dir, 'model_'+name+'.pth'))
+    print("Model saved!")
 
+def predict_and_save(model, loader, name, architecture='Unetmultiinput1'):
+    output_dir = os.path.join(architecture, 'predictions', name)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     model.eval()
     with torch.no_grad():
         for i, (inputs, _) in enumerate(tqdm(loader, desc='Predicting')):
@@ -189,13 +193,13 @@ def predict_and_save(model, loader, output_dir='predictions'):
                 save_path = os.path.join(output_dir, f'prediction_{i * len(outputs) + j}.png')
                 save_image(output, save_path)
 
-model = UNet().to(device)
-train_model(model, train_loader, val_loader, 1)  # Train for 10 epochs
+# model = UNet().to(device)
+# train_model(model, train_loader, val_loader, 1, name='1epoch')  # Train for 10 epochs
 
 
 # Assuming you have the model loaded and a device set
 model.load_state_dict(torch.load('model1.pth'))
-predict_and_save(model, test_loader)
+predict_and_save(model, test_loader, name='epoch1')
 
 
 

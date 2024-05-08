@@ -5,6 +5,7 @@ from torchvision import transforms
 from PIL import Image
 import os
 from tqdm import tqdm
+from torchvision.utils import save_image
 
 class ImagePairDataset(Dataset):
     def __init__(self, base_dir, mode='train'):
@@ -99,7 +100,7 @@ class UNetWithFusion(nn.Module):
         self.enc1_velz = EncoderBlock(1, 16)
         
         # Fusion blocks after each set of encoders
-        self.fuse1 = ConvBlock(64, 16)  # Fuse features from all four encoders
+        self.fuse1 = ConvBlock(64, 16)
         
         # Standard UNet architecture beyond initial fusion
         self.enc2 = EncoderBlock(16, 32)
@@ -135,7 +136,7 @@ class UNetWithFusion(nn.Module):
         d1 = self.dec1(b, x4)
         d2 = self.dec2(d1, x3)
         d3 = self.dec3(d2, x2)
-        d4 = self.dec4(d3, fused1)  # Note: Using initial fusion in final decoder step
+        d4 = self.dec4(d3, fused1)
         
         out = self.final(d4)
         return out
@@ -144,7 +145,7 @@ class UNetWithFusion(nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Initialize the U-Net model
-model = UNet().to(device)
+model = UNetWithFusion().to(device)
 # print(model)
 
 criterion = nn.L1Loss()  # MAE
@@ -183,10 +184,10 @@ def train_model(model, train_loader, val_loader, epochs):
         print(f'Epoch {epoch+1}, Validation MAE Loss: {val_loss}')
 
     # Save the model
-    torch.save(model.state_dict(), 'model1.pth')
+    torch.save(model.state_dict(), 'model2.pth')
     print("Model saved!")
 
-def predict_and_save(model, loader, output_dir='predictions'):
+def predict_and_save(model, loader, output_dir='Unetmultiinput2'):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -201,12 +202,12 @@ def predict_and_save(model, loader, output_dir='predictions'):
                 save_path = os.path.join(output_dir, f'prediction_{i * len(outputs) + j}.png')
                 save_image(output, save_path)
 
-model = UNet().to(device)
+model = UNetWithFusion().to(device)
 train_model(model, train_loader, val_loader, 1)  # Train for 10 epochs
 
 
 # Assuming you have the model loaded and a device set
-model.load_state_dict(torch.load('model1.pth'))
+model.load_state_dict(torch.load('Unetmultiinput2/model2.pth'))
 predict_and_save(model, test_loader)
 
 
