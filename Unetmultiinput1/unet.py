@@ -171,7 +171,7 @@ def train_model(model, train_loader, val_loader, epochs):
         print(f'Epoch {epoch+1}, Validation MAE Loss: {val_loss}')
 
     # Save the model
-    torch.save(model.state_dict(), 'model.pth')
+    torch.save(model.state_dict(), 'model1.pth')
     print("Model saved!")
 
 def predict_and_save(model, loader, output_dir='predictions'):
@@ -194,7 +194,7 @@ train_model(model, train_loader, val_loader, 1)  # Train for 10 epochs
 
 
 # Assuming you have the model loaded and a device set
-model.load_state_dict(torch.load('Unetmultiinput1/model.pth'))
+model.load_state_dict(torch.load('model1.pth'))
 predict_and_save(model, test_loader)
 
 
