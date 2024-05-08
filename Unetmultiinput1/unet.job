@@ -6,6 +6,7 @@
 #SBATCH --output=unetmultiinput%A.out
 #SBATCH --mem=40G
 #SBATCH --cpus-per-task=6
+#SBATCH --gres=gpu:4g.40gb:1
 
 set -eu
 

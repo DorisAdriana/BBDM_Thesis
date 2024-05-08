@@ -130,7 +130,7 @@ class UNetWithFusion(nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Initialize the U-Net model
-model = UNet().to(device)
+model = UNetWithFusion().to(device)
 print(model)
 
 criterion = nn.L1Loss()  # MAE
@@ -154,10 +154,10 @@ def train_model(model, epochs):
         
         # Optional: Add validation logic here
 
-    torch.save(model.state_dict(), 'model.pth')
+    torch.save(model.state_dict(), 'model2.pth')
     print("Model saved!")
 
-# train_model(model, 10)  # Specify number of epochs
+train_model(model, 1)  # Specify number of epochs
 
 import os
 import torch
@@ -166,7 +166,7 @@ from PIL import Image
 
 def predict_and_save(model, loader, output_dir='multi2predictions'):
     # Adjust path to include 'Unetbaseline'
-    output_dir = os.path.join('Unetbaseline', output_dir)
+    output_dir = os.path.join('Unetmultiinput2', output_dir)
     
     # Ensure the output directory exists
     if not os.path.exists(output_dir):
@@ -188,7 +188,7 @@ def predict_and_save(model, loader, output_dir='multi2predictions'):
                 save_image(output, save_path)
 
 # Assuming you have the model loaded and a device set
-model.load_state_dict(torch.load('Unetbaseline/model.pth'))
+model.load_state_dict(torch.load('Unetmultiinput2/model2.pth'))
 predict_and_save(model, test_loader)
 
 
