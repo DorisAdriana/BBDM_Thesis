@@ -1,4 +1,4 @@
-base_dir: 'data/slices_n98_s320x320_z88'
+base_dir: 'data/testdata' # 'data/slices_n98_s320x320_z88'
 mode:
   train: 'train'
   val: 'val'

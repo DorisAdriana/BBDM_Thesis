@@ -17,18 +17,21 @@ parser.add_argument('--epochs', type=int, help='Number of epochs to train.')
 parser.add_argument('--batch_size', type=int, help='Batch size for training, validation, and testing.')
 parser.add_argument('--learning_rate', type=float, help='Learning rate for the optimizer.')
 parser.add_argument('--device', type=str, choices=['auto', 'cuda', 'cpu'], help='Compute device to use ("auto", "cuda", or "cpu").')
-
+parser.add_argument('--mode', type=str, choices=['train', 'predict'], default='train', help='Operation mode: "train" or "predict".')
+parser.add_argument('--model_path', type=str, help='Path to the model file for prediction.')
+parser.add_argument('--output_dir', type=str, default='predictions', help='Directory to save prediction outputs.')
 args = parser.parse_args()
 
 # Load configuration from YAML file
-with open(args.config, 'r') as file:
+config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), args.config)
+with open(config_path, 'r') as file:
     config = yaml.safe_load(file)
 
 # Override config with command line arguments if provided
 if args.epochs:
     config['epochs'] = args.epochs
 if args.batch_size:
-    config['batch_size']['train'] = args.batch_size
+    config['batch_size']['train'] = args.batch_size  # Assuming the same batch size for training, validation, and testing
     config['batch_size']['val'] = args.batch_size
     config['batch_size']['test'] = args.batch_size
 if args.learning_rate:
@@ -36,12 +39,9 @@ if args.learning_rate:
 if args.device:
     config['device'] = args.device
 
-# Define device
-device_choice = config['device']
-if device_choice == 'auto':
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-elif device_choice in ['cuda', 'cpu']:
-    device = torch.device(device_choice)
+# Define device based on command line or config
+device_choice = args.device or config['device']
+device = torch.device('cuda' if device_choice == 'cuda' and torch.cuda.is_available() else 'cpu')
 
 # Dataset Class
 class ImagePairDataset(Dataset):
@@ -88,10 +88,6 @@ train_loader = DataLoader(train_dataset, batch_size=config['batch_size']['train'
 val_loader = DataLoader(val_dataset, batch_size=config['batch_size']['val'], shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=config['batch_size']['test'], shuffle=False)
 
-Can you also provide me the corresponding code for the parts:
-# Instantiate and train model, etc.
-
-# The remainder of your neural network code and training loop here
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(ConvBlock, self).__init__()
@@ -133,114 +129,109 @@ class DecoderBlock(nn.Module):
 class UNet(nn.Module):
     def __init__(self):
         super(UNet, self).__init__()
-        self.enc1 = EncoderBlock(4, 16)  # adapted for 4 inputs
+        self.enc1 = EncoderBlock(4, 16)  # adapted for 4-channel input
         self.enc2 = EncoderBlock(16, 32)
         self.enc3 = EncoderBlock(32, 64)
         self.enc4 = EncoderBlock(64, 128)
-        
         self.bridge = ConvBlock(128, 256)
-        
         self.dec1 = DecoderBlock(256, 128, 128)
         self.dec2 = DecoderBlock(128, 64, 64)
         self.dec3 = DecoderBlock(64, 32, 32)
         self.dec4 = DecoderBlock(32, 16, 16)
-        
         self.final = nn.Conv2d(16, 1, kernel_size=1)  # Output channel is 1
 
     def forward(self, x):
-        # Encoder
         x1, p1 = self.enc1(x)
         x2, p2 = self.enc2(p1)
         x3, p3 = self.enc3(p2)
         x4, p4 = self.enc4(p3)
-        
-        # Bridge
         b = self.bridge(p4)
-        
-        # Decoder
         d1 = self.dec1(b, x4)
         d2 = self.dec2(d1, x3)
         d3 = self.dec3(d2, x2)
         d4 = self.dec4(d3, x1)
-        
-        # Final Convolution
         out = self.final(d4)
         return out
 
-# Setup the device:
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-# Initialize the U-Net model
+# Instantiate the model
 model = UNet().to(device)
-# print(model)
 
-criterion = nn.L1Loss()  # MAE
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+# Define loss function and optimizer
+criterion = nn.L1Loss()  # MAE loss
+optimizer = torch.optim.Adam(model.parameters(), lr=config['learning_rate'])
 
-def train_model(model, train_loader, val_loader, epochs, name, architecture='Unetmultiinput1'):
-    print('Starting training')
+def train_model(model, train_loader, val_loader, epochs, architecture, model_name):
     for epoch in range(epochs):
         model.train()
-        train_loss = 0
-        for data in tqdm(train_loader, desc=f'Epoch {epoch+1}/{epochs} - Training'):
-            inputs, targets = data
+        total_loss = 0
+        for inputs, targets, _ in tqdm(train_loader, desc=f'Training Epoch {epoch+1}'):
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
-            train_loss += loss.item()
+            total_loss += loss.item()
 
-        train_loss /= len(train_loader)
-        print(f'Epoch {epoch+1}, Train MAE Loss: {train_loss}')
+        print(f'Epoch {epoch+1}, Average Training Loss: {total_loss / len(train_loader)}')
 
-        # Validation phase
         model.eval()
-        val_loss = 0
         with torch.no_grad():
-            for data in tqdm(val_loader, desc=f'Epoch {epoch+1}/{epochs} - Validation'):
-                inputs, targets = data
+            val_loss = 0
+            for inputs, targets, _ in tqdm(val_loader, desc=f'Validation Epoch {epoch+1}'):
                 inputs, targets = inputs.to(device), targets.to(device)
                 outputs = model(inputs)
-                loss = criterion(outputs, targets)
-                val_loss += loss.item()
+                val_loss += criterion(outputs, targets).item()
 
-        val_loss /= len(val_loader)
-        print(f'Epoch {epoch+1}, Validation MAE Loss: {val_loss}')
+        print(f'Epoch {epoch+1}, Average Validation Loss: {val_loss / len(val_loader)}')
 
-    # Save the model
-    output_dir = os.path.join(architecture, 'saved_models')
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    torch.save(model.state_dict(), os.path.join(output_dir, 'model_'+name+'.pth'))
-    print("Model saved!")
+        # Optionally save the model at each epoch
+        torch.save(model.state_dict(), f'{architecture}/results/checkpoints/{model_name}_{epoch+1}.pth')
 
-def predict_and_save(model, loader, name, architecture='Unetmultiinput1'):
-    output_dir = os.path.join(architecture, 'predictions', name)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+def predict_and_save(model, loader, model_path, output_dir):
+    """
+    Perform predictions using a trained model and save the output images.
 
+    Args:
+    model (torch.nn.Module): The neural network model to use.
+    loader (torch.utils.data.DataLoader): DataLoader containing the dataset for prediction.
+    model_path (str): Path to the trained model file.
+    output_dir (str): Directory to save prediction images.
+    """
+    # Load the model state
+    model.load_state_dict(torch.load(model_path))
+    model.to(device)
     model.eval()
+
+    # Create output directory if it does not exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Prediction loop
     with torch.no_grad():
-        for inputs, _, filenames in tqdm(loader, desc='Predicting'):  # Adjust to unpack filenames
+        for i, (inputs, _) in enumerate(tqdm(loader, desc='Predicting')):
             inputs = inputs.to(device)
             outputs = model(inputs)
-            outputs = (outputs + 1) / 2  # Normalize outputs if they are in range [-1, 1]
+            # Normalize outputs to [0, 1] if they were initially in the range [-1, 1]
+            outputs = (outputs + 1) / 2
             outputs = outputs.cpu()
 
-            # Save each output with the corresponding input filename
-            for output, filename in zip(outputs, filenames):
-                save_path = os.path.join(output_dir, filename)
+            # Save each output image
+            for j, output in enumerate(outputs):
+                save_path = os.path.join(output_dir, f'prediction_{i * len(outputs) + j}.png')
                 save_image(output, save_path)
 
-# model = UNet().to(device)
-# train_model(model, train_loader, val_loader, 1, name='1epoch')  # Train for 10 epochs
 
-
-# Assuming you have the model loaded and a device set
-model.load_state_dict(torch.load('model1.pth'))
-predict_and_save(model, test_loader, name='epoch1')
+# Command-line handling logic
+if args.mode == 'train':
+    # Assuming train_model is correctly set up to handle training
+    train_model(model, train_loader, val_loader, config['epochs'], config['architecture'], config['model_name'])
+elif args.mode == 'predict':
+    # Make sure model path and output directory are provided
+    if not args.model_path:
+        raise ValueError("Model path must be provided for prediction mode.")
+    # Using the previously defined function
+    predict_and_save(model, test_loader, args.model_path, args.output_dir)
 
 
 

@@ -15,4 +15,7 @@ source $HOME/my-scratch/env/bin/activate
 srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetmultiinput1/unet.py \
 
   
+## python3 Unetmultiinput1/unet.py --epochs 1 --batch_size 32 --learning_rate 0.1 --device cuda --config Unetmultiinput1/config.yaml
+## python3 Unetmultiinput1/unet.py --device cuda --mode predict --model_path Unetmultiinput1/results/checkpoints/model_epoch_3.pth --output_dir Unetmultiinput1/results/predictions
+
 
