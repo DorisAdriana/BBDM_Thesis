@@ -38,7 +38,7 @@ class ImagePairDataset(Dataset):
         img_B = transforms.ToTensor()(img_B)
         img_B = transforms.Normalize(mean=[0.5], std=[0.5])(img_B)
 
-        return img_tensor, img_B
+        return img_tensor, img_B, self.filenames[idx]  # Return the filename as well
 
 # Example setup of the datasets and dataloaders
 base_dir = 'data/slices_n98_s320x320_z88'
@@ -182,15 +182,18 @@ def predict_and_save(model, loader, name, architecture='Unetmultiinput1'):
     output_dir = os.path.join(architecture, 'predictions', name)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+        
     model.eval()
     with torch.no_grad():
-        for i, (inputs, _) in enumerate(tqdm(loader, desc='Predicting')):
+        for inputs, _, filenames in tqdm(loader, desc='Predicting'):  # Adjust to unpack filenames
             inputs = inputs.to(device)
             outputs = model(inputs)
-            outputs = (outputs + 1) / 2
+            outputs = (outputs + 1) / 2  # Normalize outputs if they are in range [-1, 1]
             outputs = outputs.cpu()
-            for j, output in enumerate(outputs):
-                save_path = os.path.join(output_dir, f'prediction_{i * len(outputs) + j}.png')
+
+            # Save each output with the corresponding input filename
+            for output, filename in zip(outputs, filenames):
+                save_path = os.path.join(output_dir, filename)
                 save_image(output, save_path)
 
 # model = UNet().to(device)
