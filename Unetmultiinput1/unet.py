@@ -1,7 +1,10 @@
+import torch
+import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
 import os
+from tqdm import tqdm
 
 class ImagePairDataset(Dataset):
     def __init__(self, base_dir, mode='train'):
@@ -26,13 +29,9 @@ class ImagePairDataset(Dataset):
             img = transforms.ToTensor()(img)
             imgs.append(img)
 
-        # Stack images along channel dimension to create a multi-channel input tensor
-        img_tensor = torch.cat(imgs, dim=0)  # Concatenate along the channel dimension
-
-        # Normalize the 4-channel image tensor
+        img_tensor = torch.cat(imgs, dim=0)
         img_tensor = transforms.Normalize(mean=[0.5]*4, std=[0.5]*4)(img_tensor)
 
-        # Fetch the target image
         img_B_path = os.path.join(self.dirs['original'], '..', 'B', self.filenames[idx])
         img_B = Image.open(img_B_path).convert('L')
         img_B = transforms.ToTensor()(img_B)
@@ -40,15 +39,15 @@ class ImagePairDataset(Dataset):
 
         return img_tensor, img_B
 
-# Define transformations inside the dataset to ensure they are applied correctly
-train_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'train')
-val_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'val')
-test_dataset = ImagePairDataset('data/slices_n98_s320x320_z88', 'test')
+# Example setup of the datasets and dataloaders
+base_dir = 'data/slices_n98_s320x320_z88'
+train_dataset = ImagePairDataset(base_dir, 'train')
+val_dataset = ImagePairDataset(base_dir, 'val')
+test_dataset = ImagePairDataset(base_dir, 'test')
 
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
-
 
 import torch
 import torch.nn as nn
@@ -134,17 +133,17 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Initialize the U-Net model
 model = UNet().to(device)
-print(model)
+# print(model)
 
 criterion = nn.L1Loss()  # MAE
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-def train_model(model, epochs):
+def train_model(model, train_loader, val_loader, epochs):
     print('Starting training')
-    model.train()
     for epoch in range(epochs):
-        total_loss = 0
-        for data in train_loader:
+        model.train()
+        train_loss = 0
+        for data in tqdm(train_loader, desc=f'Epoch {epoch+1}/{epochs} - Training'):
             inputs, targets = data
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
@@ -152,43 +151,47 @@ def train_model(model, epochs):
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
-            total_loss += loss.item()
-        print(f'Epoch {epoch+1}, MAE Loss: {total_loss / len(train_loader)}')
-        
-        # Optional: Add validation logic here
+            train_loss += loss.item()
 
+        train_loss /= len(train_loader)
+        print(f'Epoch {epoch+1}, Train MAE Loss: {train_loss}')
+
+        # Validation phase
+        model.eval()
+        val_loss = 0
+        with torch.no_grad():
+            for data in tqdm(val_loader, desc=f'Epoch {epoch+1}/{epochs} - Validation'):
+                inputs, targets = data
+                inputs, targets = inputs.to(device), targets.to(device)
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+                val_loss += loss.item()
+
+        val_loss /= len(val_loader)
+        print(f'Epoch {epoch+1}, Validation MAE Loss: {val_loss}')
+
+    # Save the model
     torch.save(model.state_dict(), 'model.pth')
     print("Model saved!")
 
-train_model(model, 1)  # Specify number of epochs
-
-import os
-import torch
-from torchvision.utils import save_image
-from PIL import Image
-
-def predict_and_save(model, loader, output_dir='multi1predictions'):
-    # Adjust path to include 'Unetbaseline'
-    output_dir = os.path.join('Unetmultiinput1', output_dir)
-    
-    # Ensure the output directory exists
+def predict_and_save(model, loader, output_dir='predictions'):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     model.eval()
     with torch.no_grad():
-        for i, (inputs, _, filenames) in enumerate(loader):
+        for i, (inputs, _) in enumerate(tqdm(loader, desc='Predicting')):
             inputs = inputs.to(device)
             outputs = model(inputs)
-            outputs = (outputs + 1) / 2  # Normalize outputs if they are in range [-1, 1]
+            outputs = (outputs + 1) / 2
             outputs = outputs.cpu()
-
-            # Iterate over each output and corresponding filename
-            for output, filename in zip(outputs, filenames):
-                # Remove the folder and extension from filename if needed
-                filename = filename.split('/')[-1].replace('.jpg', '.png')
-                save_path = os.path.join(output_dir, filename)
+            for j, output in enumerate(outputs):
+                save_path = os.path.join(output_dir, f'prediction_{i * len(outputs) + j}.png')
                 save_image(output, save_path)
+
+model = UNet().to(device)
+train_model(model, train_loader, val_loader, 1)  # Train for 10 epochs
+
 
 # Assuming you have the model loaded and a device set
 model.load_state_dict(torch.load('Unetmultiinput1/model.pth'))
