@@ -190,7 +190,7 @@ def train_model(model, train_loader, val_loader, epochs, architecture, model_nam
 
 def predict_and_save(model, loader, model_path, output_dir):
     """
-    Perform predictions using a trained model and save the output images.
+    Perform predictions using a trained model and save the output images using original filenames.
 
     Args:
     model (torch.nn.Module): The neural network model to use.
@@ -209,18 +209,17 @@ def predict_and_save(model, loader, model_path, output_dir):
 
     # Prediction loop
     with torch.no_grad():
-        for i, (inputs, _) in enumerate(tqdm(loader, desc='Predicting')):
+        for i, (inputs, _, filenames) in enumerate(tqdm(loader, desc='Predicting')):
             inputs = inputs.to(device)
             outputs = model(inputs)
             # Normalize outputs to [0, 1] if they were initially in the range [-1, 1]
             outputs = (outputs + 1) / 2
             outputs = outputs.cpu()
 
-            # Save each output image
-            for j, output in enumerate(outputs):
-                save_path = os.path.join(output_dir, f'prediction_{i * len(outputs) + j}.png')
+            # Save each output image, named after the original input filenames
+            for output, filename in zip(outputs, filenames):
+                save_path = os.path.join(output_dir, filename)
                 save_image(output, save_path)
-
 
 # Command-line handling logic
 if args.mode == 'train':
