@@ -152,13 +152,15 @@ print(model)
 criterion = nn.L1Loss()  # MAE
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-def train_model(model, epochs):
+def train_model(model, train_loader, val_loader, epochs):
     print('Starting training')
     model.train()
     for epoch in range(epochs):
         total_loss = 0
         for data in train_loader:
-            inputs, targets = data
+            image_dict, targets = data
+            # Stack the tensors from the dictionary to form the input tensor
+            inputs = torch.cat([image_dict[key].unsqueeze(1) for key in sorted(image_dict.keys())], dim=1)
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -166,14 +168,32 @@ def train_model(model, epochs):
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-        print(f'Epoch {epoch+1}, MAE Loss: {total_loss / len(train_loader)}')
         
-        # Optional: Add validation logic here
-
+        avg_loss = total_loss / len(train_loader)
+        print(f'Epoch {epoch+1}, Train MAE Loss: {avg_loss}')
+        
+        # Validation logic
+        val_loss = 0
+        model.eval()
+        with torch.no_grad():
+            for data in val_loader:
+                image_dict, targets = data
+                inputs = torch.cat([image_dict[key].unsqueeze(1) for key in sorted(image_dict.keys())], dim=1)
+                inputs, targets = inputs.to(device), targets.to(device)
+                outputs = model(inputs)
+                loss = criterion(outputs, targets)
+                val_loss += loss.item()
+        
+        avg_val_loss = val_loss / len(val_loader)
+        print(f'Epoch {epoch+1}, Validation MAE Loss: {avg_val_loss}')
+        model.train()  # Make sure to reset to train mode after validation
+    
+    # Save the model after all epochs
     torch.save(model.state_dict(), 'model2.pth')
     print("Model saved!")
 
-train_model(model, 1)  # Specify number of epochs
+# Example usage of the training function
+train_model(model, train_loader, val_loader, epochs=1)
 
 import os
 import torch
