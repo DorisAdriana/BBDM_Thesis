@@ -14,12 +14,13 @@ class ImagePairDataset(Dataset):
         return len(self.images_A)
 
     def __getitem__(self, idx):
+        # Fetch four images corresponding to each 'A' image as an example
         img_paths = [os.path.join(self.root_dir, 'A', self.images_A[idx]) for _ in range(4)]
         imgs = [Image.open(p).convert('L') for p in img_paths]
 
+        # Apply transformation to each image
         if self.transform:
-            imgs = [self.transform(img) for img in imgs]  # Apply transformation here
-
+            imgs = [self.transform(img) for img in imgs]
         img_tensor = torch.stack(imgs, dim=0)  # Stack to shape [4, H, W]
 
         img_B_path = os.path.join(self.root_dir, 'B', self.images_B[idx])
@@ -29,10 +30,10 @@ class ImagePairDataset(Dataset):
 
         return img_tensor, img_B
 
-# Transformations: apply ToTensor here, and Normalize if needed.
+# Define transformations with separate normalizations for each channel
 transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5] * 4, std=[0.5] * 4)  # Normalize across all channels
+    transforms.Normalize(mean=[0.5, 0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5, 0.5])
 ])
 
 print('Initialize dataloaders')
