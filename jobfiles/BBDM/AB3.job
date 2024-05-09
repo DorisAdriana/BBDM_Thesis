@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --partition=luna-long
+#SBATCH --time=10:00:00
+#SBATCH --nodes=1
+#SBATCH --job-name=ABtesting_3
+#SBATCH --output=ABtesting_3_%A.out
+#SBATCH --mem=40G
+#SBATCH --cpus-per-task=6
+#SBATCH --gres=gpu:a100:1
+
+set -eu
+
+source $HOME/my-scratch/env/bin/activate
+
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/main.py \
+    --config configs/Template_BBDM3.yaml \
+    --train \
+    --sample_at_start \
+    --save_top \
+    --gpu_ids 0 
+  
+
+
