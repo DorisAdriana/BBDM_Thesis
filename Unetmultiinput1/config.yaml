@@ -9,13 +9,13 @@ batch_size:
   val: 16
   test: 1
 
-epochs: 10
+epochs: 10 #1
 learning_rate: 0.001
 architecture: 'Unetmultiinput1'
-model_name: 'model_epoch'
+model_name: '10_epoch'
 
 device: 'auto'  # 'auto', 'cuda', or 'cpu'
 
-# python3 Unetmultiinput1/main.py --epochs 1 --batch_size 32 --learning_rate 0.1 --device cuda --config config.yaml
-# python3 Unetmultiinput1/main.py --device cuda --mode predict --model_path Unetmultiinput1/results/checkpoints/model_epoch_3.pth --output_dir Unetmultiinput1/results/predictions
+# python3 Unetmultiinput1/main.py --epochs 10 --batch_size 16 --learning_rate 0.001 --device cuda --config config.yaml
+# python3 Unetmultiinput1/main.py --device cuda --mode predict --model_path Unetmultiinput1/results/checkpoints/test1/epoch_1.pth --output_dir Unetmultiinput1/results/predictions
 

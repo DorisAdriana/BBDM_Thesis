@@ -2,8 +2,8 @@
 #SBATCH --partition=luna-long
 #SBATCH --time=3-00:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=multiunet1_train
-#SBATCH --output=Unetmultiinput1/outputfiles/train_%A.out
+#SBATCH --job-name=multiunet2_train
+#SBATCH --output=Unetmultiinput2/outputfiles/train_%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
@@ -13,7 +13,7 @@ set -eu
 
 source $HOME/my-scratch/env/bin/activate
 
-srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetmultiinput1/main.py \
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetmultiinput2/main.py \
     --epochs 10 \
     --batch_size 16 \
     --learning_rate 0.001 \

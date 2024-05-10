@@ -1,0 +1,21 @@
+base_dir: 'data/testdata' #'data/slices_n98_s320x320_z88' #'data/testdata' # 'data/slices_n98_s320x320_z88'
+mode:
+  train: 'train'
+  val: 'val'
+  test: 'test'
+
+batch_size:
+  train: 16
+  val: 16
+  test: 1
+
+epochs: 10 #1
+learning_rate: 0.001
+architecture: 'Unetmultiinput2'
+model_name: '10_epoch'
+
+device: 'auto'  # 'auto', 'cuda', or 'cpu'
+
+# python3 Unetmultiinput2/main.py --epochs 10 --batch_size 16 --learning_rate 0.001 --device cuda --config config.yaml
+# python3 Unetmultiinput2/main.py --device cuda --mode predict --model_path Unetmultiinput2/results/checkpoints/test1/epoch_1.pth --output_dir Unetmultiinput2/results/predictions
+

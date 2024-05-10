@@ -44,6 +44,11 @@ device_choice = args.device or config['device']
 device = torch.device('cuda' if device_choice == 'cuda' and torch.cuda.is_available() else 'cpu')
 
 # Dataset Class
+from torch.utils.data import Dataset
+from torchvision import transforms
+from PIL import Image
+import os
+
 class ImagePairDataset(Dataset):
     def __init__(self, base_dir, mode='train'):
         self.mode = mode
@@ -61,21 +66,23 @@ class ImagePairDataset(Dataset):
 
     def __getitem__(self, idx):
         imgs = []
+        # Iterate over each type of input and apply transformations
         for key in ['original', 'velx', 'vely', 'velz']:
             img_path = os.path.join(self.dirs[key], self.filenames[idx])
             img = Image.open(img_path).convert('L')
             img = transforms.ToTensor()(img)
+            img = transforms.Normalize(mean=[0.5], std=[0.5])(img)
             imgs.append(img)
 
-        img_tensor = torch.cat(imgs, dim=0)
-        img_tensor = transforms.Normalize(mean=[0.5]*4, std=[0.5]*4)(img_tensor)
-
+        # Load the target image, 'B', corresponding to the input 'A'
         img_B_path = os.path.join(self.dirs['original'], '..', 'B', self.filenames[idx])
         img_B = Image.open(img_B_path).convert('L')
         img_B = transforms.ToTensor()(img_B)
         img_B = transforms.Normalize(mean=[0.5], std=[0.5])(img_B)
 
-        return img_tensor, img_B, self.filenames[idx]
+        return imgs, img_B, self.filenames[idx]
+
+
 
 
 # Setup of the datasets and dataloaders
@@ -129,11 +136,19 @@ class DecoderBlock(nn.Module):
 class UNet(nn.Module):
     def __init__(self):
         super(UNet, self).__init__()
-        self.enc1 = EncoderBlock(4, 16)  # adapted for 4-channel input
-        self.enc2 = EncoderBlock(16, 32)
+        # Separate encoders for each input type
+        self.enc1_original = EncoderBlock(1, 16)
+        self.enc1_velx = EncoderBlock(1, 16)
+        self.enc1_vely = EncoderBlock(1, 16)
+        self.enc1_velz = EncoderBlock(1, 16)
+        
+        # Further layers after fusion
+        self.enc2 = EncoderBlock(16*4, 32)
         self.enc3 = EncoderBlock(32, 64)
         self.enc4 = EncoderBlock(64, 128)
         self.bridge = ConvBlock(128, 256)
+        
+        # Decoders
         self.dec1 = DecoderBlock(256, 128, 128)
         self.dec2 = DecoderBlock(128, 64, 64)
         self.dec3 = DecoderBlock(64, 32, 32)
@@ -141,7 +156,16 @@ class UNet(nn.Module):
         self.final = nn.Conv2d(16, 1, kernel_size=1)  # Output channel is 1
 
     def forward(self, x):
-        x1, p1 = self.enc1(x)
+        # Assume x is a list of four tensors: [original, velx, vely, velz]
+        x1_ori, p1_ori = self.enc1_original(x[0])
+        x1_velx, p1_velx = self.enc1_velx(x[1])
+        x1_vely, p1_vely = self.enc1_vely(x[2])
+        x1_velz, p1_velz = self.enc1_velz(x[3])
+
+        # Feature fusion
+        p1 = torch.cat([p1_ori, p1_velx, p1_vely, p1_velz], dim=1)  # Concatenate along channel dimension
+        
+        # Processing unified features
         x2, p2 = self.enc2(p1)
         x3, p3 = self.enc3(p2)
         x4, p4 = self.enc4(p3)
@@ -149,9 +173,11 @@ class UNet(nn.Module):
         d1 = self.dec1(b, x4)
         d2 = self.dec2(d1, x3)
         d3 = self.dec3(d2, x2)
-        d4 = self.dec4(d3, x1)
+        d4 = self.dec4(d3, x1_ori)  # Example of reusing original input features
+        
         out = self.final(d4)
         return out
+
 
 # Instantiate the model
 model = UNet().to(device)
