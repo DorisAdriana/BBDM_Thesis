@@ -269,7 +269,7 @@ elif args.mode == 'predict':
 
 
 
-And I get the following error:
+And I get this error:
 (env) slurm luna-01:357681> python3 Unetmultiinput2/main.py --epochs 10 --batch_size 16 --learning_rate 0.001 --device cuda --config config.yaml
 Training Epoch 1:   0%|                              | 0/3 [00:01<?, ?it/s]
 Traceback (most recent call last):
