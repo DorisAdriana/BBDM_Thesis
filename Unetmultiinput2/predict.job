@@ -16,8 +16,8 @@ source $HOME/my-scratch/env/bin/activate
 srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetmultiinput2/main.py \
     --device cuda \
     --mode predict \
-    --model_path Unetmultiinput2/results/checkpoints/model_epoch_3.pth \
-    --output_dir Unetmultiinput2/results/predictions/test1
+    --model_path Unetmultiinput2/results/checkpoints/10_epoch/model_10.pth \
+    --output_dir Unetmultiinput2/results/predictions/10_epoch
 
 
 

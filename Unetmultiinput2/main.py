@@ -193,43 +193,48 @@ def train_model(model, train_loader, val_loader, epochs, architecture, model_nam
     if not os.path.exists(checkpoint_dir):
         os.makedirs(checkpoint_dir)
 
-    # train loop    
     for epoch in range(epochs):
         model.train()
         total_loss = 0
-        for inputs, targets, _ in tqdm(train_loader, desc=f'Training Epoch {epoch+1}'):
-            inputs, targets = inputs.to(device), targets.to(device)
+        for inputs_list, targets, _ in tqdm(train_loader, desc=f'Training Epoch {epoch+1}'):
+            # Move each tensor in the list of inputs to the device
+            inputs_on_device = [inp.to(device) for inp in inputs_list]
+            targets = targets.to(device)
+
             optimizer.zero_grad()
-            outputs = model(inputs)
+            outputs = model(inputs_on_device)
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
 
         print(f'Epoch {epoch+1}, Average Training Loss: {total_loss / len(train_loader)}')
-        # eval loop
+
         model.eval()
         with torch.no_grad():
             val_loss = 0
-            for inputs, targets, _ in tqdm(val_loader, desc=f'Validation Epoch {epoch+1}'):
-                inputs, targets = inputs.to(device), targets.to(device)
-                outputs = model(inputs)
-                val_loss += criterion(outputs, targets).item()
+            for inputs_list, targets, _ in tqdm(val_loader, desc=f'Validation Epoch {epoch+1}'):
+                # Move each tensor in the list of inputs to the device
+                inputs_on_device = [inp.to(device) for inp in inputs_list]
+                targets = targets.to(device)
+
+                outputs = model(inputs_on_device)
+                val_loss += criterion(outputs, targets). item()
 
         print(f'Epoch {epoch+1}, Average Validation Loss: {val_loss / len(val_loader)}')
 
         # Save the model at each epoch
-        torch.save(model.state_dict(), f'{checkpoint_dir}/model_{epoch+1}.pth')
+        torch.save(model.state_dict(), os.path.join(checkpoint_dir, f'model_{epoch+1}.pth'))
 
 def predict_and_save(model, loader, model_path, output_dir):
     """
     Perform predictions using a trained model and save the output images using original filenames.
 
     Args:
-    model (torch.nn.Module): The neural network model to use.
-    loader (torch.utils.data.DataLoader): DataLoader containing the dataset for prediction.
-    model_path (str): Path to the trained model file.
-    output_dir (str): Directory to save prediction images.
+        model (torch.nn.Module): The neural network model to use.
+        loader (torch.utils.data.DataLoader): DataLoader containing the dataset for prediction.
+        model_path (str): Path to the trained model file.
+        output_dir (str): Directory to save prediction images.
     """
     # Load the model state
     model.load_state_dict(torch.load(model_path))
@@ -242,9 +247,10 @@ def predict_and_save(model, loader, model_path, output_dir):
 
     # Prediction loop
     with torch.no_grad():
-        for i, (inputs, _, filenames) in enumerate(tqdm(loader, desc='Predicting')):
-            inputs = inputs.to(device)
-            outputs = model(inputs)
+        for i, (inputs_list, _, filenames) in enumerate(tqdm(loader, desc='Predicting')):
+            # Move each tensor in the list of inputs to the device
+            inputs_on_device = [inp.to(device) for inp in inputs_list]
+            outputs = model(inputs_on_device)
             # Normalize outputs to [0, 1] if they were initially in the range [-1, 1]
             outputs = (outputs + 1) / 2
             outputs = outputs.cpu()
