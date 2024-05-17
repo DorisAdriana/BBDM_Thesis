@@ -12,12 +12,11 @@ def calculate_psnr(img1, img2):
 def calculate_mae(img1, img2):
     return np.mean(np.abs(img1 - img2))
 
-def calculate_ssim(img1, img2, win_size=None):
-    # Determine the minimum dimension of the image to set an appropriate win_size
-    if win_size is None:
-        min_dim = min(img1.shape[0], img1.shape[1], img2.shape[0], img2.shape[1])
-        win_size = min(7, min_dim // 2-1)
-    return ssim(img1, img2, multichannel=True, win_size=win_size)
+def calculate_ssim(img1, img2):
+    # Determine the appropriate window size
+    min_dim = min(img1.shape[0], img1.shape[1], img2.shape[0], img2.shape[1])
+    win_size = min(7, min_dim - 1)  # Ensure win_size is at most 7 and less than the smallest dimension
+    return ssim(img1, img2, multichannel=True, win_size=win_size, channel_axis=-1)
 
 def evaluate_metrics(ground_truth_dir, generated_dir):
     ground_truth_files = sorted(os.listdir(ground_truth_dir))
@@ -50,7 +49,12 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
 
             psnr = calculate_psnr(gt_image, gen_image)
             mae = calculate_mae(gt_image, gen_image)
-            ssim_value = calculate_ssim(gt_image, gen_image)
+
+            try:
+                ssim_value = calculate_ssim(gt_image, gen_image)
+            except ValueError as e:
+                print(f"Skipping SSIM calculation for {gt_file} and {gen_file} due to error: {e}")
+                ssim_value = np.nan
 
             psnr_values.append(psnr)
             mae_values.append(mae)
@@ -59,7 +63,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
         # Calculate the average metrics for this ground truth image
         avg_psnr = np.mean(psnr_values)
         avg_mae = np.mean(mae_values)
-        avg_ssim = np.mean(ssim_values)
+        avg_ssim = np.nanmean(ssim_values)  # Use nanmean to ignore NaN values
 
         # Extract subject ID and store the average metrics
         subject_id = gt_file.split('_')[2]
@@ -94,7 +98,6 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
     df_stddev.to_csv('stddev_metrics_per_subject.csv', index=False)
 
     return subject_averages, subject_stddevs
-
 
 if __name__ == "__main__":
     ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth'
