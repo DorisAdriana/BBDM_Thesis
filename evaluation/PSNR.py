@@ -9,7 +9,6 @@ def calculate_psnr(img1, img2):
 
 def evaluate_psnr(ground_truth_dir, generated_dir):
     ground_truth_files = sorted(os.listdir(ground_truth_dir))
-    psnr_results = []
     subject_psnr = defaultdict(list)
 
     for gt_file in ground_truth_files:
@@ -37,19 +36,18 @@ def evaluate_psnr(ground_truth_dir, generated_dir):
 
             psnr = calculate_psnr(gt_image, gen_image)
             psnr_values.append(psnr)
-            print(f"PSNR for {gt_file} and {gen_file}: {psnr}")
 
+        # Calculate the average PSNR for this ground truth image
         avg_psnr = np.mean(psnr_values)
-        print(f'Average PSNR for {gt_file}: {avg_psnr}')
-        psnr_results.append((gt_file, psnr_values, avg_psnr))
 
-        # Extract subject ID and store PSNR values
+        # Extract subject ID and store the average PSNR value
         subject_id = gt_file.split('_')[2]
-        subject_psnr[subject_id].extend(psnr_values)
+        subject_psnr[subject_id].append(avg_psnr)
 
     # Calculate and print averages and standard deviations per subject
     subject_averages = {}
     subject_stddevs = {}
+    results = []
 
     for subject_id, psnr_values in subject_psnr.items():
         avg_psnr = np.mean(psnr_values)
@@ -57,18 +55,13 @@ def evaluate_psnr(ground_truth_dir, generated_dir):
         subject_averages[subject_id] = avg_psnr
         subject_stddevs[subject_id] = stddev_psnr
         print(f'Subject {subject_id} - Average PSNR: {avg_psnr}, Std Dev: {stddev_psnr}')
+        results.append([subject_id, avg_psnr, stddev_psnr])
 
     # Save results to CSV file
-    results = []
+    df = pd.DataFrame(results, columns=['Subject', 'Avg_PSNR', 'StdDev_PSNR'])
+    df.to_csv('psnr_subject_results.csv', index=False)
 
-    for gt_file, psnr_values, avg_psnr in psnr_results:
-        subject_id = gt_file.split('_')[2]
-        results.append([gt_file] + psnr_values + [avg_psnr, subject_averages[subject_id], subject_stddevs[subject_id]])
-
-    df = pd.DataFrame(results, columns=['Ground Truth', 'PSNR_0', 'PSNR_1', 'PSNR_2', 'PSNR_3', 'PSNR_4', 'Avg_PSNR', 'Subject_Avg', 'Subject_StdDev'])
-    df.to_csv('psnr_results.csv', index=False)
-
-    return psnr_results
+    return subject_averages, subject_stddevs
 
 if __name__ == "__main__":
     ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth'
