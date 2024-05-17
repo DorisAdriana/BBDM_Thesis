@@ -69,3 +69,4 @@ if __name__ == "__main__":
 
     evaluate_psnr(ground_truth_dir, generated_dir)
 
+# a
