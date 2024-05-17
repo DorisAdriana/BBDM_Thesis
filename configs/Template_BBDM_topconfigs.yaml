@@ -14,7 +14,7 @@ testing:
   sample_num: 5
 
 data:
-  dataset_name: 1e_var0 #'BBDM_topconfigs2'
+  dataset_name: 1e_var0.01 #'BBDM_topconfigs2'
   dataset_type: 'custom_aligned'
   dataset_config:
     dataset_path: 'data/slices_n34_s256x256_z70' #'data/slices_n98_s320x320_z88' 
@@ -77,10 +77,10 @@ model:
 
       num_timesteps: 1000 # timesteps
       eta: 1.0 # DDIM reverse process eta
-      max_var: 0 #1.0 # maximum variance
+      max_var: 0.01 #1.0 # maximum variance
 
       UNetParams:
-        image_size: 240 #256 # 320 # 64
+        image_size: 256 #240 #256 # 320 # 64
         in_channels: 6
         model_channels: 128
         out_channels: 3

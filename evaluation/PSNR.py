@@ -39,7 +39,8 @@ def evaluate_psnr(ground_truth_dir, generated_dir):
     return average_psnr
 
 if __name__ == "__main__":
-    ground_truth_dir = 'results/BBDM_n98_s256x256_e10/BrownianBridge/samples_to_eval/ground_truth'
-    generated_dir = 'results/BBDM_n98_s256x256_e10/BrownianBridge/samples_to_eval/200'
+    ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth'
+    generated_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/200'
 
     evaluate_psnr(ground_truth_dir, generated_dir)
+
