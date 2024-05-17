@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --partition=luna-short
+#SBATCH --time=4:00:00
+#SBATCH --nodes=1
+#SBATCH --job-name=psnr
+#SBATCH --output=psnr%A.out
+#SBATCH --mem=8G
+#SBATCH --cpus-per-task=6
+#SBATCH --gres=gpu:4g.40gb:1
+
+set -eu
+
+source $HOME/my-scratch/env/bin/activate
+
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/evaluation/PSNR.py \
+
+  
+
