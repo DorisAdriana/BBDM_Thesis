@@ -5,6 +5,7 @@ import pandas as pd
 from skimage.metrics import structural_similarity as ssim
 from collections import defaultdict
 from tqdm import tqdm
+import re
 
 def calculate_psnr(img1, img2):
     return cv2.PSNR(img1, img2)
@@ -16,6 +17,13 @@ def calculate_ssim(img1, img2):
     min_dim = min(img1.shape[0], img1.shape[1], img2.shape[0], img2.shape[1])
     win_size = min(7, min_dim - 1)
     return ssim(img1, img2, multichannel=True, win_size=win_size, channel_axis=-1)
+
+def extract_subject_id(filename):
+    match = re.search(r'IMG_(.*?)__', filename)
+    if match:
+        return match.group(1)
+    else:
+        return None
 
 def evaluate_metrics(ground_truth_dir, generated_dir):
     ground_truth_files = sorted(os.listdir(ground_truth_dir))
@@ -63,7 +71,11 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
         avg_ssim = np.nanmean(ssim_values)
 
         # Extract the subject ID from the filename
-        subject_id = gt_file.split('IMG_')[1].split('__')[0]
+        subject_id = extract_subject_id(gt_file)
+        if subject_id is None:
+            print(f"Filename format error: {gt_file}")
+            continue
+
         subject_metrics[subject_id]['psnr'].append(avg_psnr)
         subject_metrics[subject_id]['mae'].append(avg_mae)
         subject_metrics[subject_id]['ssim'].append(avg_ssim)
