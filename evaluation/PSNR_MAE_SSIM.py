@@ -13,9 +13,8 @@ def calculate_mae(img1, img2):
     return np.mean(np.abs(img1 - img2))
 
 def calculate_ssim(img1, img2):
-    # Determine the appropriate window size
     min_dim = min(img1.shape[0], img1.shape[1], img2.shape[0], img2.shape[1])
-    win_size = min(7, min_dim - 1)  # Ensure win_size is at most 7 and less than the smallest dimension
+    win_size = min(7, min_dim - 1)
     return ssim(img1, img2, multichannel=True, win_size=win_size, channel_axis=-1)
 
 def evaluate_metrics(ground_truth_dir, generated_dir):
@@ -29,9 +28,8 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
             print(f"Failed to load ground truth image: {gt_path}")
             continue
 
-        # Assuming generated images are in a folder named by the ground truth image (without extension)
         generated_folder = os.path.join(generated_dir, os.path.splitext(gt_file)[0])
-        if not os.path.exists(generated_folder):
+        if not os.path.exists(generated_folder)):
             print(f"Generated images folder does not exist: {generated_folder}")
             continue
 
@@ -60,20 +58,16 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
             mae_values.append(mae)
             ssim_values.append(ssim_value)
 
-        # Calculate the average metrics for this ground truth image
         avg_psnr = np.mean(psnr_values)
         avg_mae = np.mean(mae_values)
-        avg_ssim = np.nanmean(ssim_values)  # Use nanmean to ignore NaN values
+        avg_ssim = np.nanmean(ssim_values)
 
-        # Extract subject ID and store the average metrics
         subject_id = gt_file.split('_')[2]
         subject_metrics[subject_id]['psnr'].append(avg_psnr)
         subject_metrics[subject_id]['mae'].append(avg_mae)
         subject_metrics[subject_id]['ssim'].append(avg_ssim)
 
-    # Calculate and print averages and standard deviations per subject
-    subject_averages = []
-    subject_stddevs = []
+    subject_data = []
 
     for subject_id, metrics in subject_metrics.items():
         avg_psnr = np.mean(metrics['psnr'])
@@ -87,17 +81,12 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
         print(f'Subject {subject_id} - Average MAE: {avg_mae}, Std Dev: {stddev_mae}')
         print(f'Subject {subject_id} - Average SSIM: {avg_ssim}, Std Dev: {stddev_ssim}')
 
-        subject_averages.append([subject_id, avg_psnr, avg_mae, avg_ssim])
-        subject_stddevs.append([subject_id, stddev_psnr, stddev_mae, stddev_ssim])
+        subject_data.append([subject_id, avg_psnr, stddev_psnr, avg_mae, stddev_mae, avg_ssim, stddev_ssim])
 
-    # Save results to CSV file
-    df_avg = pd.DataFrame(subject_averages, columns=['Subject', 'Avg_PSNR', 'Avg_MAE', 'Avg_SSIM'])
-    df_stddev = pd.DataFrame(subject_stddevs, columns=['Subject', 'StdDev_PSNR', 'StdDev_MAE', 'StdDev_SSIM'])
+    df = pd.DataFrame(subject_data, columns=['Subject', 'Avg_PSNR', 'StdDev_PSNR', 'Avg_MAE', 'StdDev_MAE', 'Avg_SSIM', 'StdDev_SSIM'])
+    df.to_csv('metrics_per_subject.csv', index=False)
 
-    df_avg.to_csv('average_metrics_per_subject.csv', index=False)
-    df_stddev.to_csv('stddev_metrics_per_subject.csv', index=False)
-
-    return subject_averages, subject_stddevs
+    return df
 
 if __name__ == "__main__":
     ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth'
