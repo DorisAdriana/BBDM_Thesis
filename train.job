@@ -2,8 +2,8 @@
 #SBATCH --partition=luna-short
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=train1_var_0.01
-#SBATCH --output=train_BBDM_1e_var0.01%A.out
+#SBATCH --job-name=train1_var_1
+#SBATCH --output=train_BBDM_1e_var1%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
