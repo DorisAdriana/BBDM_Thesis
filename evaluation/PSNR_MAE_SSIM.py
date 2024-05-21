@@ -62,7 +62,8 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
         avg_mae = np.mean(mae_values)
         avg_ssim = np.nanmean(ssim_values)
 
-        subject_id = gt_file.split('_')[2]
+        # Extract the subject ID from the filename
+        subject_id = gt_file.split('IMG_')[1].split('__')[0]
         subject_metrics[subject_id]['psnr'].append(avg_psnr)
         subject_metrics[subject_id]['mae'].append(avg_mae)
         subject_metrics[subject_id]['ssim'].append(avg_ssim)
@@ -89,7 +90,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
     return df
 
 if __name__ == "__main__":
-    ground_truth_dir = 'results/1e_var0.01/BrownianBridge/sample_to_eval/ground_truth' # BBDM_n98_s256x256_z88_e10
-    generated_dir = 'results/1e_var0.01/BrownianBridge/sample_to_eval/200'
+    ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth'
+    generated_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/200'
 
     evaluate_metrics(ground_truth_dir, generated_dir)
