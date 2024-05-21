@@ -29,7 +29,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
             continue
 
         generated_folder = os.path.join(generated_dir, os.path.splitext(gt_file)[0])
-        if not os.path.exists(generated_folder)):
+        if not os.path.exists(generated_folder):
             print(f"Generated images folder does not exist: {generated_folder}")
             continue
 
@@ -89,7 +89,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
     return df
 
 if __name__ == "__main__":
-    ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth'
-    generated_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/200'
+    ground_truth_dir = 'results/1e_var0.01/BrownianBridge/sample_to_eval/ground_truth' # BBDM_n98_s256x256_z88_e10
+    generated_dir = 'results/1e_var0.01/BrownianBridge/sample_to_eval/200'
 
     evaluate_metrics(ground_truth_dir, generated_dir)

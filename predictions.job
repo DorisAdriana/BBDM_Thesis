@@ -2,8 +2,8 @@
 #SBATCH --partition=luna-short
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=predict1_var_0.1
-#SBATCH --output=predict_BBDM_1e_var0.1_%A.out
+#SBATCH --job-name=predict1_var_1
+#SBATCH --output=predict_BBDM_1e_var1_%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:4g.40gb:1
@@ -17,4 +17,4 @@ srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/main
     --config configs/Template_BBDM_topconfigs.yaml \
     --sample_to_eval \
     --gpu_ids 0 \
-    --resume_model /home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/1e_var0.1/BrownianBridge/checkpoint/last_model.pth
+    --resume_model /home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/1e_var1/BrownianBridge/checkpoint/last_model.pth
