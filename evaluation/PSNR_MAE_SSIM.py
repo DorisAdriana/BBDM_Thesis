@@ -19,7 +19,7 @@ def calculate_ssim(img1, img2):
     return ssim(img1, img2, multichannel=True, win_size=win_size, channel_axis=-1)
 
 def extract_subject_id(filename):
-    match = re.search(r'IMG_(.*?)__', filename)
+    match = re.search(r'img_(.*?)__', filename)
     if match:
         return match.group(1)
     else:
@@ -29,7 +29,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
     ground_truth_files = sorted(os.listdir(ground_truth_dir))
     subject_metrics = defaultdict(lambda: {'psnr': [], 'mae': [], 'ssim': []})
 
-    for gt_file in tqdm(ground_truth_files, desc="Processing ground truth images"):
+    for gt_file in tqdm(ground_truth_files, desc="Calculating evaluation metrics for GT vs synthetic data"):
         gt_path = os.path.join(ground_truth_dir, gt_file)
         gt_image = cv2.imread(gt_path)
         if gt_image is None:
@@ -102,7 +102,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
     return df
 
 if __name__ == "__main__":
-    ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth'
+    ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth' #BBDM_n98_s256x256_z88_e10
     generated_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/200'
 
     evaluate_metrics(ground_truth_dir, generated_dir)
