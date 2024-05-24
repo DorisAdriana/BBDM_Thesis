@@ -102,7 +102,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
     return df
 
 if __name__ == "__main__":
-    ground_truth_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/ground_truth' #BBDM_n98_s256x256_z88_e10
-    generated_dir = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/200'
+    ground_truth_dir = 'results/BBDM_base/BrownianBridge/sample_to_eval/ground_truth' #BBDM_n98_s256x256_z88_e10
+    generated_dir = 'results/BBDM_base/BrownianBridge/sample_to_eval/200'
 
     evaluate_metrics(ground_truth_dir, generated_dir)

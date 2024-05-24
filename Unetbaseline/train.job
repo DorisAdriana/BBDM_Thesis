@@ -1,12 +1,12 @@
 #!/bin/bash
 #SBATCH --partition=luna-long
-#SBATCH --time=3-00:00:00
+#SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --job-name=Unetbaseline_train
 #SBATCH --output=Unetbaseline/outputfiles/train_%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:4g.40gb:1
 
 
 set -eu
