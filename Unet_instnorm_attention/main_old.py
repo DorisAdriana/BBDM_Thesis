@@ -176,33 +176,28 @@ model = UNet().to(device)
 criterion = nn.L1Loss()  # MAE loss
 optimizer = torch.optim.Adam(model.parameters(), lr=config['learning_rate'])
 
-# Mixed precision training scaler
-scaler = torch.cuda.amp.GradScaler()
-
 def train_model(model, train_loader, val_loader, epochs, architecture, model_name):
+    
+    # Create model directory in checkpoints
     checkpoint_dir = os.path.join(architecture, 'results/checkpoints', model_name)
     if not os.path.exists(checkpoint_dir):
         os.makedirs(checkpoint_dir)
 
+    # train loop    
     for epoch in range(epochs):
         model.train()
         total_loss = 0
         for inputs, targets, _ in tqdm(train_loader, desc=f'Training Epoch {epoch+1}'):
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
-
-            with torch.cuda.amp.autocast():  # Mixed precision training
-                outputs = model(inputs)
-                loss = criterion(outputs, targets)
-            
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-            
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
             total_loss += loss.item()
 
         print(f'Epoch {epoch+1}, Average Training Loss: {total_loss / len(train_loader)}')
-        
+        # eval loop
         model.eval()
         with torch.no_grad():
             val_loss = 0
@@ -213,30 +208,49 @@ def train_model(model, train_loader, val_loader, epochs, architecture, model_nam
 
         print(f'Epoch {epoch+1}, Average Validation Loss: {val_loss / len(val_loader)}')
 
+        # Save the model at each epoch
         torch.save(model.state_dict(), f'{checkpoint_dir}/model_{epoch+1}.pth')
 
 def predict_and_save(model, loader, model_path, output_dir):
+    """
+    Perform predictions using a trained model and save the output images using original filenames.
+
+    Args:
+    model (torch.nn.Module): The neural network model to use.
+    loader (torch.utils.data.DataLoader): DataLoader containing the dataset for prediction.
+    model_path (str): Path to the trained model file.
+    output_dir (str): Directory to save prediction images.
+    """
+    # Load the model state
     model.load_state_dict(torch.load(model_path))
     model.to(device)
     model.eval()
 
+    # Create output directory if it does not exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+    # Prediction loop
     with torch.no_grad():
-        for i, (inputs, _, filenames) in tqdm(loader, desc='Predicting'):
+        for i, (inputs, _, filenames) in enumerate(tqdm(loader, desc='Predicting')):
             inputs = inputs.to(device)
             outputs = model(inputs)
+            # Normalize outputs to [0, 1] if they were initially in the range [-1, 1]
             outputs = (outputs + 1) / 2
             outputs = outputs.cpu()
 
+            # Save each output image, named after the original input filenames
             for output, filename in zip(outputs, filenames):
                 save_path = os.path.join(output_dir, filename)
                 save_image(output, save_path)
 
+# Command-line handling logic
 if args.mode == 'train':
+    # Assuming train_model is correctly set up to handle training
     train_model(model, train_loader, val_loader, config['epochs'], config['architecture'], config['model_name'])
 elif args.mode == 'predict':
+    # Make sure model path and output directory are provided
     if not args.model_path:
         raise ValueError("Model path must be provided for prediction mode.")
+    # Using the previously defined function
     predict_and_save(model, test_loader, args.model_path, args.output_dir)
