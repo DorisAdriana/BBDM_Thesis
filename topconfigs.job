@@ -2,8 +2,8 @@
 #SBATCH --partition=luna-long
 #SBATCH --time=7-00:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=topconfigs2
-#SBATCH --output=topconfigs2_%A.out
+#SBATCH --job-name=topconfigs_var0.1
+#SBATCH --output=topconfigs_var0.1_%A.out
 #SBATCH --mem=80G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
