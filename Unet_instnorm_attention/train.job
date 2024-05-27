@@ -2,8 +2,8 @@
 #SBATCH --partition=luna-long
 #SBATCH --time=48:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=Unetsinglelarge_train
-#SBATCH --output=Unetsinglelarge/outputfiles/train_%A.out
+#SBATCH --job-name=Unet_instnorm_attention_train
+#SBATCH --output=Unet_instnorm_attention/outputfiles/train_%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
@@ -13,7 +13,7 @@ set -eu
 
 source $HOME/my-scratch/env/bin/activate
 
-srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetsinglelarge/main.py \
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unet_instnorm_attention/main.py \
     --epochs 10 \
     --batch_size 16 \
     --learning_rate 0.001 \

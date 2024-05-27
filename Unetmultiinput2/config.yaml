@@ -17,5 +17,7 @@ model_name: '10_epoch'
 device: 'auto'  # 'auto', 'cuda', or 'cpu'
 
 # python3 Unetmultiinput2/main.py --epochs 10 --batch_size 16 --learning_rate 0.001 --device cuda --config config.yaml
+
+### ADJUST BELOW
 # python3 Unetmultiinput2/main.py --device cuda --mode predict --model_path Unetmultiinput2/results/checkpoints/10_epoch/model_10.pth --output_dir Unetmultiinput2/results/predictions/10_epoch
 

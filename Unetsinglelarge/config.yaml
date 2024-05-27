@@ -18,5 +18,7 @@ device: 'auto'  # 'auto', 'cuda', or 'cpu'
 
 # python3 singleunetlarge/main.py --epochs 1 --batch_size 16 --learning_rate 0.001 --device auto --config config.yaml
 # python3 singleunetlarge/main.py --epochs 10 --batch_size 16 --learning_rate 0.001 --device cuda --config config.yaml
+
+### ADJUST BELOW
 # python3 singleunetlarge/main.py --device cuda --mode predict --model_path Unetmultiinput1/results/checkpoints/test1/epoch_1.pth --output_dir Unetmultiinput1/results/predictions
 
