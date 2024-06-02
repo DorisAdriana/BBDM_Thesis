@@ -19,7 +19,7 @@ def calculate_ssim(img1, img2):
     return ssim(img1, img2, multichannel=True, win_size=win_size, channel_axis=-1)
 
 def extract_subject_id(filename):
-    match = re.search(r'img_(.*?)__', filename)
+    match = re.search(r'^(.*?)__slice_', filename)
     if match:
         return match.group(1)
     else:
@@ -30,16 +30,21 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
     subject_metrics = defaultdict(lambda: {'psnr': [], 'mae': [], 'ssim': []})
 
     for gt_file in tqdm(ground_truth_files, desc="Calculating evaluation metrics for GT vs synthetic data"):
-        if not gt_file.endswith('.jpg'):
-            continue
         gt_path = os.path.join(ground_truth_dir, gt_file)
         gt_image = cv2.imread(gt_path)
         if gt_image is None:
             print(f"Failed to load ground truth image: {gt_path}")
             continue
 
-        gen_file = gt_file.replace('.jpg', '.png')
+        # Construct the corresponding generated file path
+        base_name = os.path.splitext(gt_file)[0]
+        gen_file = base_name + ".png"
         gen_path = os.path.join(generated_dir, gen_file)
+        
+        if not os.path.exists(gen_path):
+            print(f"Generated image does not exist: {gen_path}")
+            continue
+
         gen_image = cv2.imread(gen_path)
         if gen_image is None:
             print(f"Failed to load generated image: {gen_path}")
@@ -47,24 +52,22 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
 
         psnr = calculate_psnr(gt_image, gen_image)
         mae = calculate_mae(gt_image, gen_image)
+
         try:
             ssim_value = calculate_ssim(gt_image, gen_image)
         except ValueError as e:
-            print(f"Skipping SSIM calculation for {gt_file} due to error: {e}")
+            print(f"Skipping SSIM calculation for {gt_file} and {gen_file} due to error: {e}")
             ssim_value = np.nan
 
-        avg_psnr = psnr
-        avg_mae = mae
-        avg_ssim = ssim_value
-
+        # Extract the subject ID from the filename
         subject_id = extract_subject_id(gt_file)
         if subject_id is None:
             print(f"Filename format error: {gt_file}")
             continue
 
-        subject_metrics[subject_id]['psnr'].append(avg_psnr)
-        subject_metrics[subject_id]['mae'].append(avg_mae)
-        subject_metrics[subject_id]['ssim'].append(avg_ssim)
+        subject_metrics[subject_id]['psnr'].append(psnr)
+        subject_metrics[subject_id]['mae'].append(mae)
+        subject_metrics[subject_id]['ssim'].append(ssim_value)
 
     subject_data = []
 
