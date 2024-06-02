@@ -19,7 +19,7 @@ def calculate_ssim(img1, img2):
     return ssim(img1, img2, multichannel=True, win_size=win_size, channel_axis=-1)
 
 def extract_subject_id(filename):
-    match = re.search(r'^(.*?)__slice_', filename)
+    match = re.search(r'(.*?)__slice', filename)
     if match:
         return match.group(1)
     else:
@@ -36,15 +36,8 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
             print(f"Failed to load ground truth image: {gt_path}")
             continue
 
-        # Construct the corresponding generated file path
-        base_name = os.path.splitext(gt_file)[0]
-        gen_file = base_name + ".png"
+        gen_file = os.path.splitext(gt_file)[0] + '.png'
         gen_path = os.path.join(generated_dir, gen_file)
-        
-        if not os.path.exists(gen_path):
-            print(f"Generated image does not exist: {gen_path}")
-            continue
-
         gen_image = cv2.imread(gen_path)
         if gen_image is None:
             print(f"Failed to load generated image: {gen_path}")
@@ -59,7 +52,6 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
             print(f"Skipping SSIM calculation for {gt_file} and {gen_file} due to error: {e}")
             ssim_value = np.nan
 
-        # Extract the subject ID from the filename
         subject_id = extract_subject_id(gt_file)
         if subject_id is None:
             print(f"Filename format error: {gt_file}")
