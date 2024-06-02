@@ -83,7 +83,7 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
         subject_data.append([subject_id, avg_psnr, stddev_psnr, avg_mae, stddev_mae, avg_ssim, stddev_ssim])
 
     df = pd.DataFrame(subject_data, columns=['Subject', 'Avg_PSNR', 'StdDev_PSNR', 'Avg_MAE', 'StdDev_MAE', 'Avg_SSIM', 'StdDev_SSIM'])
-    df.to_csv('metrics_per_subject_Unetbaseline.csv', index=False)
+    df.to_csv('metrics_per_subject.csv', index=False)
 
     return df
 
