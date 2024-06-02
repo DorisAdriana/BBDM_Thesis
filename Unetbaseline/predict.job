@@ -16,7 +16,7 @@ source $HOME/my-scratch/env/bin/activate
 srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetbaseline/main.py \
     --device cuda \
     --mode predict \
-    --model_path Unetbaseline/results/checkpoints/10_epoch/model_10.pth \
+    --model_path Unetbaseline/results/checkpoints/10_epoch/model_9.pth \
     --output_dir Unetbaseline/results/predictions/10_epoch
 
 

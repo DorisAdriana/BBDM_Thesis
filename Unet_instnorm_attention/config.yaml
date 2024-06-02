@@ -5,8 +5,8 @@ mode:
   test: 'test'
 
 batch_size:
-  train: 16
-  val: 16
+  train: 2 #16
+  val: 2 #16
   test: 1
 
 epochs: 10 #1

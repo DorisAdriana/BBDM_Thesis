@@ -13,7 +13,7 @@ testing:
   clip_denoised: True
   sample_num: 5
 
-data:s
+data:
   dataset_name: topconfigs_var0.1 #'BBDM_topconfigs2'
   dataset_type: 'custom_aligned'
   dataset_config:
