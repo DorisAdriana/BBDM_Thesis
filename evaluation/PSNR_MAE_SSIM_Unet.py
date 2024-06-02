@@ -36,8 +36,13 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
             print(f"Failed to load ground truth image: {gt_path}")
             continue
 
-        gen_file = gt_file.replace('.jpg', '.png')
+        gen_file = gt_file  # Since both are in jpg format, filenames should be the same
         gen_path = os.path.join(generated_dir, gen_file)
+
+        # Debugging statements
+        if not os.path.exists(gen_path):
+            print(f"Generated image does not exist: {gen_path}")
+            continue
         gen_image = cv2.imread(gen_path)
         if gen_image is None:
             print(f"Failed to load generated image: {gen_path}")
