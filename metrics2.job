@@ -2,8 +2,8 @@
 #SBATCH --partition=luna-short
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=metrics_bbdmtopconfigs
-#SBATCH --output=metricstopconfigs%A.out
+#SBATCH --job-name=metrics_unetsinglelarge
+#SBATCH --output=metricsunetsinglelarge%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:a100:1
@@ -12,7 +12,7 @@ set -eu
 
 source $HOME/my-scratch/env/bin/activate
 
-srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/evaluation/PSNR_MAE_SSIM2.py \
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/evaluation/PSNR_MAE_SSIM_Unet2.py \
 
   
 
