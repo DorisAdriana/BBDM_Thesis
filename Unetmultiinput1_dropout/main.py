@@ -77,7 +77,6 @@ class ImagePairDataset(Dataset):
 
         return img_tensor, img_B, self.filenames[idx]
 
-
 # Setup of the datasets and dataloaders
 base_dir = config['base_dir']
 train_dataset = ImagePairDataset(base_dir, config['mode']['train'])
@@ -89,24 +88,26 @@ val_loader = DataLoader(val_dataset, batch_size=config['batch_size']['val'], shu
 test_loader = DataLoader(test_dataset, batch_size=config['batch_size']['test'], shuffle=False)
 
 class ConvBlock(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, dropout=0.0):
         super(ConvBlock, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(in_channels, out_channels, 3, padding=1),
             nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
             nn.Conv2d(out_channels, out_channels, 3, padding=1),
             nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout)
         )
 
     def forward(self, x):
         return self.conv(x)
 
 class EncoderBlock(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, dropout=0.0):
         super(EncoderBlock, self).__init__()
-        self.conv = ConvBlock(in_channels, out_channels)
+        self.conv = ConvBlock(in_channels, out_channels, dropout)
         self.pool = nn.MaxPool2d(2)
 
     def forward(self, x):
@@ -115,10 +116,10 @@ class EncoderBlock(nn.Module):
         return x, p
 
 class DecoderBlock(nn.Module):
-    def __init__(self, in_channels, mid_channels, out_channels):
+    def __init__(self, in_channels, mid_channels, out_channels, dropout=0.0):
         super(DecoderBlock, self).__init__()
         self.up = nn.ConvTranspose2d(in_channels, mid_channels, kernel_size=2, stride=2)
-        self.conv = ConvBlock(mid_channels + out_channels, out_channels)
+        self.conv = ConvBlock(mid_channels + out_channels, out_channels, dropout)
 
     def forward(self, x, skip):
         x = self.up(x)
@@ -129,15 +130,15 @@ class DecoderBlock(nn.Module):
 class UNet(nn.Module):
     def __init__(self):
         super(UNet, self).__init__()
-        self.enc1 = EncoderBlock(4, 16)  # adapted for 4-channel input
-        self.enc2 = EncoderBlock(16, 32)
-        self.enc3 = EncoderBlock(32, 64)
-        self.enc4 = EncoderBlock(64, 128)
-        self.bridge = ConvBlock(128, 256)
-        self.dec1 = DecoderBlock(256, 128, 128)
-        self.dec2 = DecoderBlock(128, 64, 64)
-        self.dec3 = DecoderBlock(64, 32, 32)
-        self.dec4 = DecoderBlock(32, 16, 16)
+        self.enc1 = EncoderBlock(4, 16, dropout=0.1)  # Adapted for 4-channel input
+        self.enc2 = EncoderBlock(16, 32, dropout=0.1)
+        self.enc3 = EncoderBlock(32, 64, dropout=0.2)
+        self.enc4 = EncoderBlock(64, 128, dropout=0.2)
+        self.bridge = ConvBlock(128, 256, dropout=0.3)
+        self.dec1 = DecoderBlock(256, 128, 128, dropout=0.2)
+        self.dec2 = DecoderBlock(128, 64, 64, dropout=0.2)
+        self.dec3 = DecoderBlock(64, 32, 32, dropout=0.1)
+        self.dec4 = DecoderBlock(32, 16, 16, dropout=0.1)
         self.final = nn.Conv2d(16, 1, kernel_size=1)  # Output channel is 1
 
     def forward(self, x):
@@ -238,8 +239,3 @@ elif args.mode == 'predict':
         raise ValueError("Model path must be provided for prediction mode.")
     # Using the previously defined function
     predict_and_save(model, test_loader, args.model_path, args.output_dir)
-
-
-
-
-

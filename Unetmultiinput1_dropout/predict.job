@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --partition=luna-long
+#SBATCH --time=12:00:00
+#SBATCH --nodes=1
+#SBATCH --job-name=multiunet1_dropout_predict
+#SBATCH --output=Unetmultiinput1_dropout/outputfiles/predict_%A.out
+#SBATCH --mem=8G
+#SBATCH --cpus-per-task=6
+#SBATCH --gres=gpu:4g.40gb:1
+
+
+set -eu
+
+source $HOME/my-scratch/env/bin/activate
+
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetmultiinput1_dropout/main.py \
+    --device cuda \
+    --mode predict \
+    --model_path Unetmultiinput1_dropout/results/checkpoints/10_epoch/model_10.pth \
+    --output_dir Unetmultiinput1_dropout/results/predictions/10_epoch
+
+
+
