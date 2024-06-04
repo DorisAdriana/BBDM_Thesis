@@ -26,6 +26,6 @@ def improve_mri_contrast(input_path, export_path):
         enhanced_img.save(export_path)
 
 # Example usage
-input_path = 'input_path.png'
-export_path = 'export_path.png'
+input_path = 'results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/200/img_TOW143__slice_10_10/output_1.png'
+export_path = 'output1.png'
 improve_mri_contrast(input_path, export_path)
