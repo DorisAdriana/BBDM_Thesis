@@ -62,8 +62,14 @@ class ImagePairDataset(Dataset):
         img_A = transforms.ToTensor()(img_A)
         img_A = transforms.Normalize(mean=[0.5], std=[0.5])(img_A)
 
-        img_B_path = os.path.join(self.dir_A, '..', 'B', self.filenames[idx]).replace('.jpg','.png')  # change this is if .jpg file
-        parts = imb&
+        ### This is adjusted compared to the others to train on segs
+        # Replace .jpg with .png and remove the second underscore
+        img_B_filename = self.filenames[idx].replace('.jpg', '.png')
+        parts = img_B_filename.split('_', 2)
+        if len(parts) > 2:
+            img_B_filename = parts[0] + '_' + parts[1] + parts[2]
+
+        img_B_path = os.path.join(self.dir_B, img_B_filename)
         img_B = Image.open(img_B_path).convert('L')
         img_B = transforms.ToTensor()(img_B)
         img_B = transforms.Normalize(mean=[0.5], std=[0.5])(img_B)
