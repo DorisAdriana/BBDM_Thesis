@@ -55,7 +55,7 @@ class ImagePairDataset(Dataset):
 
     def __len__(self):
         return len(self.filenames)
-Intelligent-scouting23
+
     def __getitem__(self, idx):
         img_A_path = os.path.join(self.dir_A, self.filenames[idx])
         img_A = Image.open(img_A_path).convert('L')
