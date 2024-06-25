@@ -55,14 +55,15 @@ class ImagePairDataset(Dataset):
 
     def __len__(self):
         return len(self.filenames)
-
+Intelligent-scouting23
     def __getitem__(self, idx):
         img_A_path = os.path.join(self.dir_A, self.filenames[idx])
         img_A = Image.open(img_A_path).convert('L')
         img_A = transforms.ToTensor()(img_A)
         img_A = transforms.Normalize(mean=[0.5], std=[0.5])(img_A)
 
-        img_B_path = os.path.join(self.dir_A, '..', 'B', self.filenames[idx])
+        img_B_path = os.path.join(self.dir_A, '..', 'B', self.filenames[idx]).replace('.jpg','.png')  # change this is if .jpg file
+        parts = imb&
         img_B = Image.open(img_B_path).convert('L')
         img_B = transforms.ToTensor()(img_B)
         img_B = transforms.Normalize(mean=[0.5], std=[0.5])(img_B)

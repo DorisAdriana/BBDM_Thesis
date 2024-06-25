@@ -6,16 +6,18 @@ import re
 import numpy as np
 import shutil
 
-###### Store data in the right format and location for training ######
+
+#1, 10, 36 and 108 should be removed from processed segs
+# 96 scans in total with 37 and 97 not included
 
 ### Subjectss
 # split
 # train: 79, 47, 16, 16
 # test/val: 19, 11, 4 ,4
 
-folders=['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW037', 'TOW040',
+folders=['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW040',
           'TOW042', 'TOW044', 'TOW046', 'TOW048', 'TOW049', 'TOW054', 'TOW055', 'TOW057', 'TOW063', 'TOW068', 'TOW073', 'TOW074', 'TOW075', 
-          'TOW080', 'TOW082', 'TOW084', 'TOW088', 'TOW092', 'TOW097', 'TOW100', 'TOW106', 'TOW112', 'TOW113', 'TOW118', 'TOW119', 'TOW125', 
+          'TOW080', 'TOW082', 'TOW084', 'TOW088', 'TOW092', 'TOW100', 'TOW106', 'TOW112', 'TOW113', 'TOW118', 'TOW119', 'TOW125', 
           'TOW128', 'TOW130', 'TOW132', 'TOW137', 'TOW139', 'TOW140', 'TOW141', 'TOW142', 'TOW143', 'TOW144', 'TOW146', 'TOW201', 'TOW213', 
           'TOW216', 'TOW218', 'TOW224', 'TOW239', 'TOW246', 'TOW247', 'TOW248', 'TOW251', 'TOW254', 'TOW257', 'TOW259', 'TOW286', 'TOW321', 
           'TOW363', 'TOW503', 'TOW512', 'TOW513', 'TOW523', 'TOW544', 'TOW549', 'TOW553', 'TOW557', 'TOW563', 'TOW571', 'TOW600', 'TOW605', 
@@ -25,35 +27,52 @@ patients = folders[0:79]
 volunteers = folders[79:99]
 trainfolders = patients[0:47]+volunteers[0:11]
 testfolders = patients[47:63]+volunteers[11:15]
-valfolders = patients[63:80]+volunteers[15:19]
+valfolders = patients[63:78]+volunteers[15:19]
 print("train",trainfolders)
+### OLD
 # ['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW037', 
 # 'TOW040', 'TOW042', 'TOW044', 'TOW046', 'TOW048', 'TOW049', 'TOW054', 'TOW055', 'TOW057', 'TOW063', 'TOW068', 'TOW073', 
 # 'TOW074', 'TOW075', 'TOW080', 'TOW082', 'TOW084', 'TOW088', 'TOW092', 'TOW097', 'TOW100', 'TOW106', 'TOW112', 'TOW113', 
 # 'TOW118', 'TOW119', 'TOW125', 'TOW128', 'TOW130', 'TOW132', 'TOW137', 'TOW139', 'TOW140', 'TOW141', 'TOW142', 'TOW_VOL01', 
 # 'TOW_VOL02', 'TOW_VOL03', 'TOW_VOL04', 'TOW_VOL05', 'TOW_VOL06', 'TOW_VOL07', 'TOW_VOL08', 'TOW_VOL09', 'TOW_VOL10', 'TOW_VOL11']
+### NEW
+#  ['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW040', 
+# 'TOW042', 'TOW044', 'TOW046', 'TOW048', 'TOW049', 'TOW054', 'TOW055', 'TOW057', 'TOW063', 'TOW068', 'TOW073', 'TOW074', 'TOW075',
+#  'TOW080', 'TOW082', 'TOW084', 'TOW088', 'TOW092', 'TOW100', 'TOW106', 'TOW112', 'TOW113', 'TOW118', 'TOW119', 'TOW125', 'TOW128',
+#  'TOW130', 'TOW132', 'TOW137', 'TOW139', 'TOW140', 'TOW141', 'TOW142', 'TOW143', 'TOW144', 'TOW_VOL03', 'TOW_VOL04', 'TOW_VOL05', 
+#  'TOW_VOL06', 'TOW_VOL07', 'TOW_VOL08', 'TOW_VOL09', 'TOW_VOL10', 'TOW_VOL11', 'TOW_VOL12', 'TOW_VOL13']
 print("test",testfolders)
+### OLD
 # ['TOW143', 'TOW144', 'TOW146', 'TOW201', 'TOW213', 'TOW216', 'TOW218', 'TOW224', 'TOW239', 'TOW246', 'TOW247', 'TOW248', 
-# 'TOW251', 'TOW254', 'TOW257', 'TOW259', 'TOW_VOL12', 'TOW_VOL13', 'TOW_VOL14', 'TOW_VOL15']
+# 'TOW251', 'TOW254', 'TOW257', 'TOW259', 'TOW_VOL12', 'TOW_VOL13', 'TOW_VOL14', 'TOW_VOL15'
+### NEW
+# test ['TOW146', 'TOW201', 'TOW213', 'TOW216', 'TOW218', 'TOW224', 'TOW239', 'TOW246', 'TOW247', 'TOW248',
+#  'TOW251', 'TOW254', 'TOW257', 'TOW259', 'TOW286', 'TOW321', 'TOW_VOL14', 'TOW_VOL15', 'TOW_VOL16', 'TOW_VOL18']
+
 print("val",valfolders)
+### OLD
 # ['TOW286', 'TOW321', 'TOW363', 'TOW503', 'TOW512', 'TOW513', 'TOW523', 'TOW544', 'TOW549', 'TOW553', 'TOW557', 'TOW563', 
 # 'TOW571', 'TOW600', 'TOW605', 'TOW700', 'TOW_VOL16', 'TOW_VOL18', 'TOW_VOL19', 'TOW_VOL20']
+### NEW
+# val ['TOW363', 'TOW503', 'TOW512', 'TOW513', 'TOW523', 'TOW544', 'TOW549', 'TOW553', 'TOW557', 'TOW563',
+#  'TOW571', 'TOW600', 'TOW605', 'TOW700', 'TOW_VOL01', 'TOW_VOL19', 'TOW_VOL20']
 
 ### CHANGE THIS TO DESIRED FOLDER
 # Define the source folders and the destination folders
-source_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/4dflow_slices_n98_s256x320_z88', 'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/bSSFP_slices_n98_s256x320_z88'}
-destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/slices_n98_s256x320_z88/train/A',
-                       'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/slices_n98_s256x320_z88/train/B'}
+
+source_folders = {'seg': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/seg_slices_n98_s320x320_z88'}
+destination_folders = {'seg': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/slices_n96_s320x320_z88_seg/val/B'}
+
 
 
 # Function to copy files for the first 20 scans
 def copy_files_for_scans(source, destination):
     # Loop through the first 2s0 scans
-    for scan in trainfolders: ### CHANGE THIS
+    for scan in valfolders: ### CHANGE THIS
         # For each scan, loop through the slices
         for N in range(1, 89):
             for M in range(1, 16):
-                file_name = f'img_{scan}__slice_{N}_{M}.jpg'
+                file_name = f'img_{scan}_slice_{N}_{M}.png'
                 source_file = os.path.join(source, file_name)
                 destination_file = os.path.join(destination, file_name)
                 # Copy file if it exists

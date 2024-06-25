@@ -13,9 +13,9 @@ import shutil
 # train: 79, 47, 16, 16
 # test/val: 19, 11, 4 ,4
 
-folders=['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW037', 'TOW040',
+folders=['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW040',
           'TOW042', 'TOW044', 'TOW046', 'TOW048', 'TOW049', 'TOW054', 'TOW055', 'TOW057', 'TOW063', 'TOW068', 'TOW073', 'TOW074', 'TOW075', 
-          'TOW080', 'TOW082', 'TOW084', 'TOW088', 'TOW092', 'TOW097', 'TOW100', 'TOW106', 'TOW112', 'TOW113', 'TOW118', 'TOW119', 'TOW125', 
+          'TOW080', 'TOW082', 'TOW084', 'TOW088', 'TOW092', 'TOW100', 'TOW106', 'TOW112', 'TOW113', 'TOW118', 'TOW119', 'TOW125', 
           'TOW128', 'TOW130', 'TOW132', 'TOW137', 'TOW139', 'TOW140', 'TOW141', 'TOW142', 'TOW143', 'TOW144', 'TOW146', 'TOW201', 'TOW213', 
           'TOW216', 'TOW218', 'TOW224', 'TOW239', 'TOW246', 'TOW247', 'TOW248', 'TOW251', 'TOW254', 'TOW257', 'TOW259', 'TOW286', 'TOW321', 
           'TOW363', 'TOW503', 'TOW512', 'TOW513', 'TOW523', 'TOW544', 'TOW549', 'TOW553', 'TOW557', 'TOW563', 'TOW571', 'TOW600', 'TOW605', 
@@ -25,7 +25,7 @@ patients = folders[0:79]
 volunteers = folders[79:99]
 trainfolders = patients[0:47]+volunteers[0:11]
 testfolders = patients[47:63]+volunteers[11:15]
-valfolders = patients[63:80]+volunteers[15:19]
+valfolders = patients[63:78]+volunteers[15:19]
 print("train",trainfolders)
 # ['TOW011', 'TOW012', 'TOW013', 'TOW015', 'TOW016', 'TOW017', 'TOW018', 'TOW019', 'TOW027', 'TOW029', 'TOW033', 'TOW037', 
 # 'TOW040', 'TOW042', 'TOW044', 'TOW046', 'TOW048', 'TOW049', 'TOW054', 'TOW055', 'TOW057', 'TOW063', 'TOW068', 'TOW073', 
@@ -41,15 +41,14 @@ print("val",valfolders)
 
 ### CHANGE THIS TO DESIRED FOLDER
 # Define the source folders and the destination folders
-source_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/4dflow_slices_n98_s256x320_z88', 'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/bSSFP_slices_n98_s256x320_z88'}
-destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/slices_n98_s256x320_z88/train/A',
-                       'bSSFP': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/slices_n98_s256x320_z88/train/B'}
+source_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/4dflow_slices_n98_s320x320_z88'}
+destination_folders = {'4dflow': 'my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/data/slices_n96_s320x320_z88_seg/val/A'}
 
 
 # Function to copy files for the first 20 scans
 def copy_files_for_scans(source, destination):
     # Loop through the first 2s0 scans
-    for scan in trainfolders: ### CHANGE THIS
+    for scan in valfolders: ### CHANGE THIS
         # For each scan, loop through the slices
         for N in range(1, 89):
             for M in range(1, 16):
