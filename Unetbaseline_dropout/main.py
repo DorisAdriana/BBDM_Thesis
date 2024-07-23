@@ -1,3 +1,4 @@
+### CODE IS ADJUSTED TO RUN ON SEGMENTATIONS
 ### Run and see if improvement over baseline, if not: discard, if yes: include with multi-input as well
 
 import argparse
@@ -45,12 +46,12 @@ if args.device:
 device_choice = args.device or config['device']
 device = torch.device('cuda' if device_choice == 'cuda' and torch.cuda.is_available() else 'cpu')
 
-# Dataset Class
 class ImagePairDataset(Dataset):
     def __init__(self, base_dir, mode='train'):
         self.mode = mode
         self.base_dir = base_dir
         self.dir_A = os.path.join(base_dir, mode, 'A')
+        self.dir_B = os.path.join(base_dir, mode, 'B')
         self.filenames = sorted(os.listdir(self.dir_A))
 
     def __len__(self):
@@ -62,13 +63,11 @@ class ImagePairDataset(Dataset):
         img_A = transforms.ToTensor()(img_A)
         img_A = transforms.Normalize(mean=[0.5], std=[0.5])(img_A)
 
-        ### This is adjusted compared to the others to train on segs
-        # Replace .jpg with .png and remove the second underscore
+        # Replace .jpg with .png for images in folder B
         img_B_filename = self.filenames[idx].replace('.jpg', '.png')
-        parts = img_B_filename.split('_', 2)
-        if len(parts) > 2:
-            img_B_filename = parts[0] + '_' + parts[1] + parts[2]
-
+        underscore_pos = [pos for pos, char in enumerate(img_B_filename) if char == '_']
+        if len(underscore_pos) >= 2:
+            img_B_filename = img_B_filename[:underscore_pos[2]] + img_B_filename[underscore_pos[2]+1:]
         img_B_path = os.path.join(self.dir_B, img_B_filename)
         img_B = Image.open(img_B_path).convert('L')
         img_B = transforms.ToTensor()(img_B)

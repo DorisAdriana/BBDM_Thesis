@@ -1,13 +1,12 @@
 #!/bin/bash
 #SBATCH --partition=luna-long
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --job-name=Unetbaseline_dropout_train_seg
 #SBATCH --output=Unetbaseline_dropout/outputfiles/seg_train_%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
-#SBATCH --gres=gpu:4g.40gb:1
-
+#SBATCH --gres=gpu:a100:1
 
 set -eu
 
@@ -16,7 +15,7 @@ source $HOME/my-scratch/env/bin/activate
 srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unetbaseline_dropout/main.py \
     --epochs 10 \
     --batch_size 16 \
-    --learning_rate 0.01 \
+    --learning_rate 0.1 \
     --device cuda \
     --config config.yaml
 

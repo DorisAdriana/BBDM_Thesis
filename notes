@@ -1,8 +1,0 @@
-Calculating evaluation metrics for GT vs synthetic data:   0%|          | 0/26400 [00:00<?, ?it/s][ WARN:0@0.866] global loadsave.cpp:244 findDecoder imread_('Unetbaseline/results/predictions/10_epoch/img_TOW143__slice_10_1.png'): can't open/read file: check file path/integrity
-[ WARN:0@0.869] global loadsave.cpp:244 findDecoder imread_('Unetbaseline/results/predictions/10_epoch/img_TOW143__slice_10_10.png'): can't open/read file: check file path/integrity
-[ WARN:0@0.873] global loadsave.cpp:244 findDecoder imread_('Unetbaseline/results/predictions/10_epoch/img_TOW143__slice_10_11.png'): can't open/read file: check file path/integrity
-[ WARN:0@0.877] global loadsave.cpp:244 findDecoder imread_('Unetbaseline/results/predictions/10_epoch/img_TOW143__slice_10_12.png'): can't open/read file: check file path/integrity
-[ WARN:0@0.880] global loadsave.cpp:244 findDecoder imread_('Unetbaseline/results/predictions/10_epoch/img_TOW143__slice_10_13.png'): can't open/read file: check file path/integrity
-[ WARN:0@0.884] global loadsave.cpp:244 findDecoder imread_('Unetbaseline/results/predictions/10_epoch/img_TOW143__slice_10_14.png'): can't open/read file: check file path/integrity
-[ WARN:0@0.888] global loadsave.cpp:244 findDecoder imread_('Unetbaseline/results/predictions/10_epoch/img_TOW143__slice_10_15.png'): can't open/read file: check file path/integrity
-[ WARN:0@0.892] global loadsave.cpp
