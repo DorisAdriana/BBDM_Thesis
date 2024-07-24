@@ -20,3 +20,4 @@ predictions
 predictions2epoch
 Unetmultiinput1/outputfiles
 Unetmultiinput1/results
+segmentations
