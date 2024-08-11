@@ -3,7 +3,6 @@ import os
 from vedo import load, Plotter
 
 # Define the path to your images and the output video file
-base_path = ""  # Adjust this to the correct path
 video_path = "gt_144.mp4"
 fps = 5  # Frames per second in the output video
 
@@ -14,7 +13,7 @@ writer = imageio.get_writer(video_path, fps=fps)
 plotter = Plotter(offscreen=True)
 
 for i in range(1, 16):  # Assuming 15 volumes, adjust as necessary
-    file_path = f"gt/scan_144_b{i:02d}.nii.gz"
+    file_path = f"eval_seg/seg_pred/scan_144_b{i:02d}.nii.gz"
     volume = load(file_path)
     volume.rotate_z(-90)
 
