@@ -38,45 +38,77 @@ class BrownianBridgeModel(nn.Module):
         self.condition_key = model_params.UNetParams.condition_key
 
         self.denoise_fn = UNetModel(**vars(model_params.UNetParams))
-
+    
+    ### MONOTONICALLY INCREASING NOISE SCHEDULE
     def register_schedule(self):
-        T = self.num_timesteps
+    T = self.num_timesteps
 
-        if self.mt_type == "linear":
-            m_min, m_max = 0.001, 0.999
-            m_t = np.linspace(m_min, m_max, T)
-        elif self.mt_type == "sin":
-            m_t = 1.0075 ** np.linspace(0, T, T)
-            m_t = m_t / m_t[-1]
-            m_t[-1] = 0.999
-        else:
-            raise NotImplementedError
-        m_tminus = np.append(0, m_t[:-1])
+    # Implementing the monotonically increasing variance schedule
+    gamma = 0.5  # Adjust gamma based on how steep you want the increase
+    variance_t = np.array([min(gamma + (1 - gamma) * (t / T) ** 2, 1.0) for t in range(T)]) * self.max_var
 
-        variance_t = 2. * (m_t - m_t ** 2) * self.max_var
-        variance_tminus = np.append(0., variance_t[:-1])
-        variance_t_tminus = variance_t - variance_tminus * ((1. - m_t) / (1. - m_tminus)) ** 2
-        posterior_variance_t = variance_t_tminus * variance_tminus / variance_t
+    m_t = np.linspace(0.001, 0.999, T)  # Keeping the time schedule linear
+    variance_tminus = np.append(0., variance_t[:-1])
+    variance_t_tminus = variance_t - variance_tminus * ((1. - m_t) / (1. - np.append(0, m_t[:-1]))) ** 2
+    posterior_variance_t = variance_t_tminus * variance_tminus / variance_t
 
-        to_torch = partial(torch.tensor, dtype=torch.float32)
-        self.register_buffer('m_t', to_torch(m_t))
-        self.register_buffer('m_tminus', to_torch(m_tminus))
-        self.register_buffer('variance_t', to_torch(variance_t))
-        self.register_buffer('variance_tminus', to_torch(variance_tminus))
-        self.register_buffer('variance_t_tminus', to_torch(variance_t_tminus))
-        self.register_buffer('posterior_variance_t', to_torch(posterior_variance_t))
+    to_torch = partial(torch.tensor, dtype=torch.float32)
+    self.register_buffer('m_t', to_torch(m_t))
+    self.register_buffer('variance_t', to_torch(variance_t))
+    self.register_buffer('variance_tminus', to_torch(variance_tminus))
+    self.register_buffer('variance_t_tminus', to_torch(variance_t_tminus))
+    self.register_buffer('posterior_variance_t', to_torch(posterior_variance_t))
 
-        if self.skip_sample:
-            if self.sample_type == 'linear':
-                midsteps = torch.arange(self.num_timesteps - 1, 1,
-                                        step=-((self.num_timesteps - 1) / (self.sample_step - 2))).long()
-                self.steps = torch.cat((midsteps, torch.Tensor([1, 0]).long()), dim=0)
-            elif self.sample_type == 'cosine':
-                steps = np.linspace(start=0, stop=self.num_timesteps, num=self.sample_step + 1)
-                steps = (np.cos(steps / self.num_timesteps * np.pi) + 1.) / 2. * self.num_timesteps
-                self.steps = torch.from_numpy(steps)
-        else:
-            self.steps = torch.arange(self.num_timesteps-1, -1, -1)
+    if self.skip_sample:
+        if self.sample_type == 'linear':
+            midsteps = torch.arange(self.num_timesteps - 1, 1,
+                                    step=-((self.num_timesteps - 1) / (self.sample_step - 2))).long()
+            self.steps = torch.cat((midsteps, torch.Tensor([1, 0]).long()), dim=0)
+        elif self.sample_type == 'cosine':
+            steps = np.linspace(start=0, stop=self.num_timesteps, num=self.sample_step + 1)
+            steps = (np.cos(steps / self.num_timesteps * np.pi) + 1.) / 2. * self.num_timesteps
+            self.steps = torch.from_numpy(steps)
+    else:
+        self.steps = torch.arange(self.num_timesteps-1, -1, -1)
+
+    # def register_schedule(self):
+    #     T = self.num_timesteps
+
+    #     if self.mt_type == "linear":
+    #         m_min, m_max = 0.001, 0.999
+    #         m_t = np.linspace(m_min, m_max, T)
+    #     elif self.mt_type == "sin":
+    #         m_t = 1.0075 ** np.linspace(0, T, T)
+    #         m_t = m_t / m_t[-1]
+    #         m_t[-1] = 0.999
+    #     else:
+    #         raise NotImplementedError
+    #     m_tminus = np.append(0, m_t[:-1])
+
+    #     variance_t = 2. * (m_t - m_t ** 2) * self.max_var
+    #     variance_tminus = np.append(0., variance_t[:-1])
+    #     variance_t_tminus = variance_t - variance_tminus * ((1. - m_t) / (1. - m_tminus)) ** 2
+    #     posterior_variance_t = variance_t_tminus * variance_tminus / variance_t
+
+    #     to_torch = partial(torch.tensor, dtype=torch.float32)
+    #     self.register_buffer('m_t', to_torch(m_t))
+    #     self.register_buffer('m_tminus', to_torch(m_tminus))
+    #     self.register_buffer('variance_t', to_torch(variance_t))
+    #     self.register_buffer('variance_tminus', to_torch(variance_tminus))
+    #     self.register_buffer('variance_t_tminus', to_torch(variance_t_tminus))
+    #     self.register_buffer('posterior_variance_t', to_torch(posterior_variance_t))
+
+    #     if self.skip_sample:
+    #         if self.sample_type == 'linear':
+    #             midsteps = torch.arange(self.num_timesteps - 1, 1,
+    #                                     step=-((self.num_timesteps - 1) / (self.sample_step - 2))).long()
+    #             self.steps = torch.cat((midsteps, torch.Tensor([1, 0]).long()), dim=0)
+    #         elif self.sample_type == 'cosine':
+    #             steps = np.linspace(start=0, stop=self.num_timesteps, num=self.sample_step + 1)
+    #             steps = (np.cos(steps / self.num_timesteps * np.pi) + 1.) / 2. * self.num_timesteps
+    #             self.steps = torch.from_numpy(steps)
+    #     else:
+    #         self.steps = torch.arange(self.num_timesteps-1, -1, -1)
 
     def apply(self, weight_init):
         self.denoise_fn.apply(weight_init)
