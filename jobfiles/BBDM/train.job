@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --partition=luna-short
-#SBATCH --time=4:00:00
+#SBATCH --partition=luna-long
+#SBATCH --time=6-00:00:00
 #SBATCH --nodes=1
 #SBATCH --job-name=bbdm_monotonicvar
 #SBATCH --output=bdm_monotonicvar%A.out
-#SBATCH --mem=8G
+#SBATCH --mem=80G
 #SBATCH --cpus-per-task=6
 #SBATCH --gres=gpu:4g.40gb:1
 

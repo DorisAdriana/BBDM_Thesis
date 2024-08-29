@@ -16,4 +16,4 @@ srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/main
     --config configs/Template_BBDM.yaml \
     --sample_to_eval \
     --gpu_ids 0 \
-    --resume_model /home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/BBDM_60e_98s_256/BrownianBridge/checkpoint/last_model.pth
+    --resume_model /home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/BBDM_monotonic_var_10/BrownianBridge/checkpoint/last_model.pth

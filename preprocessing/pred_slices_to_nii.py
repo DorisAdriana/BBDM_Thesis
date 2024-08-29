@@ -66,8 +66,8 @@ create_nifti_from_slices(
     num_scans=8, 
     num_slices_a=88, 
     num_slices_b=15, 
-    scan_ids=['143', '144', '146', '201', '213', '216','218', '224'], # 239 not finished yet and no volunteers included yet
-    output_directory="my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/Unet_input/pred_niftis", 
-    input_directory= '/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/BBDM_n98_s256x256_z88_e10/BrownianBridge/sample_to_eval/200/',#"/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/bSSFP_slices_n98_s320x320_z88", #'/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/BBDM_60e_98s_256/BrownianBridge/sample_to_eval/200/', # for gt: "/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/bSSFP_slices_n98_s320x320_z88",
+    scan_ids=['143', '144', '146', '201', '213', '216','218', '224', '239', '246', '247', '248', '251', '254', '257'], # 239 not finished yet and no volunteers included yet
+    output_directory="my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/segmentations/inputs/BBDM_default/pred_niftis_mvar", 
+    input_directory= '/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/BBDM_monotonic_var_10/BrownianBridge/sample_to_eval/200/',#"/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/bSSFP_slices_n98_s320x320_z88", #'/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/results/BBDM_60e_98s_256/BrownianBridge/sample_to_eval/200/', # for gt: "/home/rnga/dawezenberg/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/data/processed/bSSFP_slices_n98_s320x320_z88",
     data_type= 'pred'  # 'gt' or 'pred'
 )
