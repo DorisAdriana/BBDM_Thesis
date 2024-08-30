@@ -97,12 +97,12 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
         subject_data.append([subject_id, avg_psnr, stddev_psnr, avg_mae, stddev_mae, avg_ssim, stddev_ssim])
 
     df = pd.DataFrame(subject_data, columns=['Subject', 'Avg_PSNR', 'StdDev_PSNR', 'Avg_MAE', 'StdDev_MAE', 'Avg_SSIM', 'StdDev_SSIM'])
-    df.to_csv('metrics_per_subject.csv', index=False)
+    df.to_csv('metrics_per_subject_BBDM_mvar.csv', index=False)
 
     return df
 
 if __name__ == "__main__":
-    ground_truth_dir = 'results/BBDM_base/BrownianBridge/sample_to_eval/ground_truth' #BBDM_n98_s256x256_z88_e10
-    generated_dir = 'results/BBDM_base/BrownianBridge/sample_to_eval/200'
+    ground_truth_dir = 'results/BBDM_monotonic_var_10/BrownianBridge/sample_to_eval/ground_truth' #BBDM_n98_s256x256_z88_e10
+    generated_dir = 'results/BBDM_monotonic_var_10/BrownianBridge/sample_to_eval/200'
 
     evaluate_metrics(ground_truth_dir, generated_dir)

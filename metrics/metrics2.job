@@ -2,11 +2,11 @@
 #SBATCH --partition=luna-short
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=metrics_bbdm_base
-#SBATCH --output=metrics_bbdm_base%A.out
+#SBATCH --job-name=metrics_bbdm_mvar
+#SBATCH --output=metrics_bbdm_mvar%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:4g.40gb:1
 
 set -eu
 
