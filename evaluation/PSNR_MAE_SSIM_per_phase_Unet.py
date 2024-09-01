@@ -85,6 +85,6 @@ def evaluate_metrics(ground_truth_dir, generated_dir):
 
 if __name__ == "__main__":
     ground_truth_dir = 'data/slices_n98_s320x320_z88/test/B'
-    generated_dir = 'Unetbaseline_dropout/results/predictions/10_epoch'
+    generated_dir = 'Unetmultiinput1/results/predictions/10_epoch'
 
     evaluate_metrics(ground_truth_dir, generated_dir)

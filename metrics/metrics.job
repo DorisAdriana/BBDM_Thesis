@@ -2,17 +2,17 @@
 #SBATCH --partition=luna-short
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
-#SBATCH --job-name=metrics_Unetmultiinput2
-#SBATCH --output=metrics_Unetmultiinput2%A.out
+#SBATCH --job-name=phase_metrics_Unetmultiinput1
+#SBATCH --output=phase_metrics_Unetmultiinput1%A.out
 #SBATCH --mem=8G
 #SBATCH --cpus-per-task=6
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:4g.40gb:1
 
 set -eu
 
 source $HOME/my-scratch/env/bin/activate
 
-srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/evaluation/PSNR_MAE_SSIM_Unet.py \
+srun python $HOME/my-rdisk/r-divi/RNG/Projects/stages/Pim/Doris/BBDM_Thesis/evaluation/PSNR_MAE_SSIM_per_phase_Unet.py \
 
   
 
